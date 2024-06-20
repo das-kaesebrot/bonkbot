@@ -1,5 +1,6 @@
 import logging
 import discord
+from pydantic_core import ValidationError
 
 from .bot import BonkBot
 from .config import BotConfig
@@ -20,10 +21,14 @@ def main():
         intents.message_content = True
         client = BonkBot(intents=intents)
         client.run(config.token)
+        
+    except ValidationError as e:
+        logger.exception("Missing config setting(s)")
+        exit(1)
 
     except Exception as e:
         logger.exception("Exception occured")
-        exit(1)
+        exit(2)
 
 
 if __name__ == "__main__":
