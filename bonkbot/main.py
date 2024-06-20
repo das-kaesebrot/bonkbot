@@ -20,7 +20,7 @@ def main():
         intents = discord.Intents.default()
         intents.message_content = True
         client = BonkBot(intents=intents)
-        client.run(config.token)
+        client.run(config.token, log_handler=None)
         
     except ValidationError as e:
         logger.exception("Missing config setting(s)")
