@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "bonkbot.main",
             "env": {
-                "TOKEN": "changeme"
+                "BONKBOT_TOKEN": "changeme"
             }
         }
     ]
