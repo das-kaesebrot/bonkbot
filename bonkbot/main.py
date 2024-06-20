@@ -2,6 +2,7 @@ import logging
 import discord
 
 from .bot import BonkBot
+from .config import BotConfig
 
 
 def main():
@@ -12,11 +13,12 @@ def main():
     logger = logging.getLogger()
 
     try:
+        config = BotConfig()
 
         intents = discord.Intents.default()
         intents.message_content = True
         client = BonkBot(intents=intents)
-        client.run("token")
+        client.run(config.token)
 
     except Exception as e:
         logger.exception("Exception occured")
