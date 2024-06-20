@@ -8,12 +8,13 @@ from .config import BotConfig
 def main():
     logging.basicConfig(
         format="[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s",
-        level=logging.DEBUG,
+        level=logging.INFO,
     )
     logger = logging.getLogger()
 
     try:
         config = BotConfig()
+        logger.setLevel(logging.getLevelName(config.log_level.upper()))
 
         intents = discord.Intents.default()
         intents.message_content = True
