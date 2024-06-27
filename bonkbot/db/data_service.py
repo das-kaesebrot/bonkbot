@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Engine, select
+from sqlalchemy import URL, create_engine, Engine, select
 from sqlalchemy.orm import sessionmaker
 
 from ..models.models import User, Guild
@@ -8,7 +8,7 @@ class DataService:
     __engine: Engine = None
     __session = None
 
-    def __init__(self, *, connection_string: str = "sqlite://") -> None:
+    def __init__(self, *, connection_string: str | URL = "sqlite://") -> None:
         self.__engine = create_engine(connection_string, echo=True)
         self.__session = sessionmaker(self.__engine)
 
