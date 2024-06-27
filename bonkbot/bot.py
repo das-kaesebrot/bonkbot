@@ -39,6 +39,18 @@ class BonkBot(discord.Client):
         if message.author == self.user:
             return
         
+        # split on whitespace
+        split_message_content = message_content.split()
+        
+        if len(split_message_content) < 1:
+            return
+        
+        command = split_message_content[0]
+        additional_args = None
+        
+        if len(split_message_content) > 1:
+            additional_args = " ".join(split_message_content[1:])
+        
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
         if message_content.startswith(BotCommand.PREFIX):
