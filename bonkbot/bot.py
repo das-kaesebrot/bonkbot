@@ -13,7 +13,7 @@ class BonkBot(discord.Client):
         *,
         user_service: UserService,
         intents: discord.Intents,
-        **options: logging.Any,
+        **options,
     ) -> None:
         self.__user_service = user_service
         super().__init__(intents=intents, **options)
