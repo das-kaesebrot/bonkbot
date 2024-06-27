@@ -28,7 +28,7 @@ class User(Base):
 
 
 class Guild(Base):
-    __tablename__ = "users"
+    __tablename__ = "guilds"
     id: Mapped[int] = mapped_column(primary_key=True)
     prefix: Mapped[str] = mapped_column(String(1))
     users: Mapped[List["User"]] = relationship(
