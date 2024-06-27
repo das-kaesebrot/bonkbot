@@ -1,21 +1,21 @@
 import logging
 import discord
 
-from .db.user_service import UserService
+from .db.user_service import DataService
 
 
 class BonkBot(discord.Client):
-    __user_service: UserService
+    __data_service: DataService
     __logger = logging.getLogger("bot")
 
     def __init__(
         self,
         *,
-        user_service: UserService,
+        data_service: DataService,
         intents: discord.Intents,
         **options,
     ) -> None:
-        self.__user_service = user_service
+        self.__data_service = data_service
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
