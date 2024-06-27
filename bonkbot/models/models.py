@@ -13,8 +13,8 @@ class Base(DeclarativeBase):
 association_table = Table(
     "association_table",
     Base.metadata,
-    Column("left_id", ForeignKey("left_table.id"), primary_key=True),
-    Column("right_id", ForeignKey("right_table.id"), primary_key=True),
+    Column("left_id", ForeignKey("users.id"), primary_key=True),
+    Column("right_id", ForeignKey("guilds.id"), primary_key=True),
 )
 
 
