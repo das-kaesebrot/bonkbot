@@ -2,7 +2,7 @@ import logging
 import discord
 from pydantic_core import ValidationError
 
-from .db.user_service import UserService
+from .db.user_service import DataService
 from .bot import BonkBot
 from .config import BotConfig
 
@@ -20,7 +20,7 @@ def main():
 
         intents = discord.Intents.default()
         intents.message_content = True
-        user_service = UserService()
+        user_service = DataService()
         client = BonkBot(user_service=user_service, intents=intents)
         client.run(config.token, log_handler=None)
         
