@@ -2,7 +2,7 @@ import logging
 import discord
 from pydantic_core import ValidationError
 
-from .db.user_service import DataService
+from .db.data_service import DataService
 from .bot import BonkBot
 from .config import BotConfig
 

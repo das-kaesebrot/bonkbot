@@ -1,7 +1,7 @@
 import logging
 import discord
 
-from .db.user_service import DataService
+from .db.data_service import DataService
 
 
 class BonkBot(discord.Client):
