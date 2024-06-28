@@ -107,3 +107,8 @@ class BonkBot(discord.Client):
             
             await message.channel.send(f"**bonk {matched_user.display_name}**\n\n_user has been bonked {user.bonks} times so far_")
             return
+        
+        elif command == BotCommand.HELP:
+            available_commands = [cached_guild.prefix + command_enum for command_enum in BotCommand.list()]
+            await message.channel.send(f"Available commands: `{'`, `'.join(available_commands)}`")
+            return
