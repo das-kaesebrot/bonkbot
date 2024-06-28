@@ -10,11 +10,11 @@ class Base(DeclarativeBase):
     pass
 
 
-association_table = Table(
-    "association_table",
+user_guild = Table(
+    "user_guild",
     Base.metadata,
-    Column("left_id", ForeignKey("users.id"), primary_key=True),
-    Column("right_id", ForeignKey("guilds.id"), primary_key=True),
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+    Column("guild_id", ForeignKey("guilds.id"), primary_key=True),
 )
 
 
@@ -23,7 +23,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     bonks: Mapped[int] = mapped_column()
     guilds: Mapped[List["Guild"]] = relationship(
-        secondary=association_table, back_populates="users"
+        secondary=user_guild, back_populates="users"
     )
 
 
@@ -32,5 +32,5 @@ class Guild(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     prefix: Mapped[str] = mapped_column(String(1))
     users: Mapped[List["User"]] = relationship(
-        secondary=association_table, back_populates="guilds"
+        secondary=user_guild, back_populates="guilds"
     )
