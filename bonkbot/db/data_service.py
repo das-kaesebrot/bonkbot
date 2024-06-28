@@ -66,4 +66,10 @@ class DataService:
         new_guild = Guild(id=guild, prefix="!", users=[])
         self.__session.add(new_guild)
         
-        return new_guild
+    def commit_db(self) -> None:
+        self.__session.commit()
+    
+    def save_and_commit(self, object):
+        self.__session.add(object)
+        self.__session.commit()
+        self.__session.flush()
