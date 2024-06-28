@@ -88,3 +88,22 @@ class BonkBot(discord.Client):
             
             await message.channel.send(f"user {matched_user.display_name} has been bonked {user.bonks} times so far")
             return
+            
+        elif command == BotCommand.BONK:
+            if not additional_args or len(additional_args) < 1:
+                await message.channel.send("User needs to be specified!")
+                return
+                                    
+            matched_users = await message.guild.query_members(additional_args.lower())
+            
+            if len(matched_users) < 1:
+                await message.channel.send(f"Couldn't find any users by `{additional_args}`!")
+                return
+            
+            matched_user = matched_users[0]
+            user = self.__data_service.get_user(matched_user.id)
+            user.bonk()
+            self.__data_service.save_and_commit(user)
+            
+            await message.channel.send(f"**bonk {matched_user.display_name}**\n\n_user has been bonked {user.bonks} times so far_")
+            return
