@@ -68,3 +68,23 @@ class BonkBot(discord.Client):
             self.__data_service.save_and_commit(cached_guild)
             await message.channel.send(f"Set guild command prefix to `{additional_args}`")
             return
+            
+        elif command == BotCommand.BONKS:
+            if not additional_args or len(additional_args) < 1:
+                top_users = self.__data_service.get_top_bonked_users(cached_guild.id)
+                
+                # TODO
+                # await message.channel.send(f"**TOP BONKS**")
+                return
+                                    
+            matched_users = await message.guild.query_members(additional_args.lower())
+            
+            if len(matched_users) < 1:
+                await message.channel.send(f"Couldn't find any users by `{additional_args}`!")
+                return
+            
+            matched_user = matched_users[0]
+            user = self.__data_service.get_user(matched_user.id)
+            
+            await message.channel.send(f"user {matched_user.display_name} has been bonked {user.bonks} times so far")
+            return
