@@ -26,20 +26,20 @@ class DataService:
         Returns:
             User: the user that was found or just added to the database
         """
-        with self.__session.begin() as session:
-            select_statement = select(User).where(User.id.is_(user_id))
+    
+        select_statement = select(User).where(User.id.is_(user_id))
 
-            user = session.scalars(select_statement).one_or_none()
+        user = self.__session.scalars(select_statement).one_or_none()
 
-            if user:
-                return user
-            
-            # if no user was found, generate one
-            new_user = User(id=user_id, bonks=0, guilds=[])
-            session.add(new_user)
-            return new_user
+        if user:
+            return user
         
-    def get_guild(self, guild_id: int) -> Guild:
+        # if no user was found, generate one
+        new_user = User(id=user_id, bonks=0, guilds=[])
+        self.__session.add(new_user)
+        
+        return new_user
+    
         """Gets a guild (server) by the specified guild_id. Always returns a value, either an existing guild or a new one generated on the fly.
 
         Args:
