@@ -40,23 +40,30 @@ class DataService:
         
         return new_user
     
+    def get_guild(self, guild: int | discord.guild.Guild) -> Guild:
         """Gets a guild (server) by the specified guild_id. Always returns a value, either an existing guild or a new one generated on the fly.
 
         Args:
-            guild_id (int): the guild id
+            guild (int | discord.guild.Guild): the guild object or id
 
         Returns:
             Guild: the guild that was found or just added to the database
         """
-        with self.__session.begin() as session:
-            select_statement = select(Guild).where(Guild.id.is_(guild_id))
+        guild_id = 0
+        if isinstance(guild, discord.guild.Guild):
+            guild_id = guild.id
+        else:
+            guild_id = guild
+        
+        select_statement = select(Guild).where(Guild.id.is_(guild_id))
 
-            guild = session.scalars(select_statement).one_or_none()
+        guild = self.__session.scalars(select_statement).one_or_none()
 
-            if guild:
-                return guild
-            
-            # if no guild was found, generate one
-            new_guild = Guild(id=guild, prefix="!", users=[])
-            session.add(new_guild)
-            return new_guild
+        if guild:
+            return guild
+        
+        # if no guild was found, generate one
+        new_guild = Guild(id=guild, prefix="!", users=[])
+        self.__session.add(new_guild)
+        
+        return new_guild
