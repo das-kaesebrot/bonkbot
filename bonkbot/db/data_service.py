@@ -1,5 +1,5 @@
 from sqlalchemy import URL, create_engine, Engine, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 
 from ..models.models import User, Guild
 
@@ -10,7 +10,9 @@ class DataService:
 
     def __init__(self, *, connection_string: str | URL = "sqlite://") -> None:
         self.__engine = create_engine(connection_string, echo=True)
-        self.__session = sessionmaker(self.__engine)
+        Base.metadata.create_all(self.__engine)        
+        self.__session = Session(self.__engine)
+        
 
     def get_user(self, user_id: int) -> User:
         """Gets a user by the specified user_id. Always returns a value, either an existing user or a new one generated on the fly.
