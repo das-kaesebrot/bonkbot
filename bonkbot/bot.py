@@ -23,18 +23,18 @@ class BonkBot(discord.Client):
         self.__logger.info(f"Logged on as {self.user}")
 
     async def on_message(self, message: discord.Message):
-        prefix = self.__data_service.get_guild(message.guild.id).prefix
+        cached_guild = self.__data_service.get_guild(message.guild)
         user = self.__data_service.get_user(message.author.id)
         
         # get message with all whitespace around it removed
         message_content = message.content.strip()
         
         # ignore all messages not starting with our prefix
-        if not message_content.startswith(prefix):
+        if not message_content.startswith(cached_guild.prefix):
             return
         
         # remove the prefix
-        message_content = message_content.removeprefix(prefix)
+        message_content = message_content.removeprefix(cached_guild.prefix)
         
         # don't respond to ourselves
         if message.author == self.user:
