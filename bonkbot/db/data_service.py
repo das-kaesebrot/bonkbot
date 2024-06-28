@@ -13,6 +13,9 @@ class DataService:
         Base.metadata.create_all(self.__engine)        
         self.__session = Session(self.__engine)
         
+    def __del__(self):
+        self.__session.close()
+        
 
     def get_user(self, user_id: int) -> User:
         """Gets a user by the specified user_id. Always returns a value, either an existing user or a new one generated on the fly.
