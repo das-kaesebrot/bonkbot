@@ -54,14 +54,17 @@ class BonkBot(discord.Client):
         
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
-        if message_content.startswith(BotCommand.PREFIX):
-            # get or set prefix here
-            pass
-        elif message_content.startswith(BotCommand.BONKS):
-            # get a users bonks here
-            # message.guild.query_members()
-            pass
-        elif message_content.startswith(BotCommand.BONK):
-            # bonk a user here
-            pass
-        
+        if command == BotCommand.PREFIX:            
+            if not additional_args:
+                # reply with prefix here
+                await message.channel.send(f"Guild is using prefix `{cached_guild.prefix}`")
+                return
+            
+            if len(additional_args) != 1 or additional_args == " ":
+                await message.channel.send(f"Invalid prefix supplied! Prefix has to be a single non-white space character. Given value: `{additional_args}`")
+                return
+            
+            cached_guild.prefix = additional_args
+            self.__data_service.save_and_commit(cached_guild)
+            await message.channel.send(f"Set guild command prefix to `{additional_args}`")
+            return
