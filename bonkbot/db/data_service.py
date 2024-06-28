@@ -67,6 +67,14 @@ class DataService:
         new_guild = Guild(id=guild, prefix="!", users=[])
         self.__session.add(new_guild)
         
+        return new_guild
+    
+    def get_top_bonked_users(self, guild_id: int, limit: int = 5):
+        select_statement = select(User).join(user_guild).where(user_guild.c.guild_id.is_(guild_id)).order_by(User.bonks).limit(limit)
+        top_users = self.__session.scalars(select_statement).all()
+        
+        return top_users
+    
     def commit_db(self) -> None:
         self.__session.commit()
     
