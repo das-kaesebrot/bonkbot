@@ -25,7 +25,9 @@ class User(Base):
     guilds: Mapped[List["Guild"]] = relationship(
         secondary=user_guild, back_populates="users"
     )
-
+    
+    def bonk(self):
+        self.bonks += 1
 
 class Guild(Base):
     __tablename__ = "guilds"
