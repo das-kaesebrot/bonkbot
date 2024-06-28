@@ -1,7 +1,8 @@
+import discord
 from sqlalchemy import URL, create_engine, Engine, select
 from sqlalchemy.orm import Session
 
-from ..models.models import User, Guild
+from ..models.models import Base, User, Guild, user_guild
 
 
 class DataService:
