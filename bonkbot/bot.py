@@ -3,6 +3,7 @@ import discord
 
 from .db.data_service import DataService
 from .enums.bot_command import BotCommand
+from .models.models import Guild
 
 
 class BonkBot(discord.Client):
@@ -51,23 +52,26 @@ class BonkBot(discord.Client):
         
         if len(split_message_content) > 1:
             additional_args = " ".join(split_message_content[1:])
+            
+        response = await self.__handle_command(message, command, additional_args, cached_guild)
         
+        if response:
+            await message.channel.send(response)
+        
+    async def __handle_command(self, message: discord.Message, command: BotCommand, additional_args: str | None, cached_guild: Guild) -> str | None:
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
         if command == BotCommand.PREFIX:            
             if not additional_args:
                 # reply with prefix here
-                await message.channel.send(f"Guild is using prefix `{cached_guild.prefix}`")
-                return
+                return f"Guild is using prefix `{cached_guild.prefix}`"
             
             if len(additional_args) != 1 or additional_args == " ":
-                await message.channel.send(f"Invalid prefix supplied! Prefix has to be a single non-white space character. Given value: `{additional_args}`")
-                return
+                return f"Invalid prefix supplied! Prefix has to be a single non-white space character. Given value: `{additional_args}`"
             
             cached_guild.prefix = additional_args
             self.__data_service.save_and_commit(cached_guild)
-            await message.channel.send(f"Set guild command prefix to `{additional_args}`")
-            return
+            return f"Set guild command prefix to `{additional_args}`"
             
         elif command == BotCommand.BONKS:
             if not additional_args or len(additional_args) < 1:
@@ -80,35 +84,29 @@ class BonkBot(discord.Client):
             matched_users = await message.guild.query_members(additional_args.lower())
             
             if len(matched_users) < 1:
-                await message.channel.send(f"Couldn't find any users by `{additional_args}`!")
-                return
+                return f"Couldn't find any users by `{additional_args}`!"
             
             matched_user = matched_users[0]
             user = self.__data_service.get_user(matched_user.id)
             
-            await message.channel.send(f"user {matched_user.display_name} has been bonked {user.bonks} times so far")
-            return
+            return f"user {matched_user.display_name} has been bonked {user.bonks} times so far"
             
         elif command == BotCommand.BONK:
             if not additional_args or len(additional_args) < 1:
-                await message.channel.send("User needs to be specified!")
-                return
+                return "User needs to be specified!"
                                     
             matched_users = await message.guild.query_members(additional_args.lower())
             
             if len(matched_users) < 1:
-                await message.channel.send(f"Couldn't find any users by `{additional_args}`!")
-                return
+                return f"Couldn't find any users by `{additional_args}`!"
             
             matched_user = matched_users[0]
             user = self.__data_service.get_user(matched_user.id)
             user.bonk()
             self.__data_service.save_and_commit(user)
             
-            await message.channel.send(f"**bonk {matched_user.display_name}**\n\n_user has been bonked {user.bonks} times so far_")
-            return
+            return f"**bonk {matched_user.display_name}**\n\n_user has been bonked {user.bonks} times so far_"
         
         elif command == BotCommand.HELP:
             available_commands = [cached_guild.prefix + command_enum for command_enum in BotCommand.list()]
-            await message.channel.send(f"Available commands: `{'`, `'.join(available_commands)}`")
-            return
+            return f"Available commands: `{'`, `'.join(available_commands)}`"
