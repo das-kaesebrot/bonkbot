@@ -11,8 +11,12 @@ name: Create and publish a Docker image
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
+    paths:
+      - "**.py"
+      - .github/workflows/build-and-publish.yml
+      - Dockerfile
 
 jobs:
   build-and-push-image:
