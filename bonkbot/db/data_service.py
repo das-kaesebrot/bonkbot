@@ -63,7 +63,7 @@ class DataService:
             return guild
 
         # if no guild was found, generate one
-        new_guild = Guild(id=guild, prefix="!", users=[])
+        new_guild = Guild(id=guild_id, prefix="!", users=[])
         self.__session.add(new_guild)
 
         return new_guild
