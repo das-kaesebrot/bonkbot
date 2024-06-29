@@ -10,14 +10,6 @@ class Base(DeclarativeBase):
     pass
 
 
-user_guild = Table(
-    "user_guild",
-    Base.metadata,
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
-    Column("guild_id", ForeignKey("guilds.id"), primary_key=True),
-)
-
-
 class User(Base):
     __tablename__ = "users"
     # Not the actual discord id, since we have to be scoped to a guild -> generate a new value instead
