@@ -27,7 +27,7 @@ class BonkBot(discord.Client):
         cached_guild = self.__data_service.get_guild(message.guild)
 
         # get message with all whitespace around it removed
-        message_content = message.content.strip()
+        message_content = message.content.strip().lower()
 
         # ignore all messages not starting with our prefix
         # but allow messages containing just the word bonk
