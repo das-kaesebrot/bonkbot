@@ -1,9 +1,8 @@
 import discord
-from sqlalchemy import URL, create_engine, Engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy import URL, create_engine, Engine, desc, func, select
+from sqlalchemy.orm import Session, aliased
 
-from ..models.models import Base, User, Guild, user_guild
-
+from ..models.models import Base, Bonk, User, Guild
 
 class DataService:
     __engine: Engine = None
