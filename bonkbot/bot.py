@@ -100,20 +100,40 @@ class BonkBot(discord.Client):
             return f"user {matched_user.display_name} has been bonked {user.bonks} times so far"
 
         elif command == BotCommand.BONK:
-            if not additional_args or len(additional_args) < 1:
+            bonked_user = None
+            if message.reference:
+                resolved_reference = message.reference.resolved
+
+                if resolved_reference:
+                    bonked_user = resolved_reference.author
+                else:
+                    bonked_user = (
+                        await message.channel.fetch_message(
+                            message.reference.message_id
+                        )
+                    ).author
+
+            elif len(message.mentions) > 0:
+                bonked_user = message.mentions[0]
+
+            elif not additional_args or len(additional_args) < 1:
                 return "User needs to be specified!"
 
-            matched_users = await message.guild.query_members(additional_args.lower())
+            if not bonked_user:
+                matched_users = await message.guild.query_members(
+                    additional_args.lower()
+                )
 
-            if len(matched_users) < 1:
-                return f"Couldn't find any users by `{additional_args}`!"
+                if len(matched_users) < 1:
+                    return f"Couldn't find any users by `{additional_args}`!"
 
-            matched_user = matched_users[0]
-            user = self.__data_service.get_user(matched_user.id)
+                bonked_user = matched_users[0]
+
+            user = self.__data_service.get_user(bonked_user.id, cached_guild.id)
             user.bonk()
             self.__data_service.save_and_commit(user)
 
-            return f"**bonk {matched_user.display_name}**\n\n_user has been bonked {user.bonks} times so far_"
+            return f"**bonk {bonked_user.display_name}**\n\n_user has been bonked {user.bonk_amount()} times so far_"
 
         elif command == BotCommand.HELP:
             available_commands = [
