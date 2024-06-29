@@ -30,7 +30,8 @@ class BonkBot(discord.Client):
         message_content = message.content.strip()
 
         # ignore all messages not starting with our prefix
-        if not message_content.startswith(cached_guild.prefix):
+        # but allow messages containing just the word bonk
+        if not message_content.startswith(cached_guild.prefix) and message_content != BotCommand.BONK:
             return
 
         # remove the prefix
