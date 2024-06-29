@@ -17,15 +17,18 @@ class DataService:
     def __del__(self):
         self.__session.close()
 
-    def get_user(self, user_id: int) -> User:
+    def get_user(self, discord_id: int, guild_id: int) -> User:
         """Gets a user by the specified user_id. Always returns a value, either an existing user or a new one generated on the fly.
 
         Args:
-            user_id (int): the user id
+            discord_id (int): the discord user id
+            guild_id (int): the guild id
 
         Returns:
             User: the user that was found or just added to the database
         """
+        
+        user_id = User.get_id(discord_id, guild_id)
 
         select_statement = select(User).where(User.id.is_(user_id))
 
@@ -35,8 +38,10 @@ class DataService:
             return user
 
         # if no user was found, generate one
-        new_user = User(id=user_id, bonks=0, guilds=[])
-        self.__session.add(new_user)
+        new_user = User(id=user_id, discord_id=discord_id)
+        guild = self.get_guild(guild_id)
+        guild.users.append(new_user)
+        self.__session.add_all([new_user, guild])
 
         return new_user
 
