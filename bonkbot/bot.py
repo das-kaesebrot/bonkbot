@@ -25,7 +25,6 @@ class BonkBot(discord.Client):
 
     async def on_message(self, message: discord.Message):
         cached_guild = self.__data_service.get_guild(message.guild)
-        user = self.__data_service.get_user(message.author.id)
 
         # get message with all whitespace around it removed
         message_content = message.content.strip()
