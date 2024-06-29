@@ -37,6 +37,12 @@ class User(Base):
         digest = hashlib.shake_256(f"{discord_id}{guild_id}").digest(32) # collision free?
         return int.from_bytes(digest)
 
+class Bonk(Base):
+    __tablename__ = "bonks"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user: Mapped["User"] = mapped_column(ForeignKey("users.id"))
+    created: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+
 class Guild(Base):
     __tablename__ = "guilds"
     id: Mapped[int] = mapped_column(primary_key=True)
