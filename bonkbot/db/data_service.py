@@ -73,11 +73,21 @@ class DataService:
         return new_guild
 
     def get_top_bonked_users(self, guild_id: int, limit: int = 5):
+        bonk_alias = aliased(Bonk)
+        bonk_count_subquery = (
+            select(
+                bonk_alias.user,
+                func.count(bonk_alias.id).label('bonk_count')
+            )
+            .group_by(bonk_alias.user)
+            .subquery()
+        )
+            
         select_statement = (
             select(User)
-            .join(user_guild)
-            .where(user_guild.c.guild_id.is_(guild_id))
-            .order_by(User.bonks)
+            .join(bonk_count_subquery, User.id == bonk_count_subquery.c.user)
+            .where(User.guild == guild_id)
+            .order_by(desc(bonk_count_subquery.c.bonk_count))
             .limit(limit)
         )
         top_users = self.__session.scalars(select_statement).all()
