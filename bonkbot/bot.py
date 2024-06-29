@@ -69,6 +69,7 @@ class BonkBot(discord.Client):
     ) -> str | None:
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
+
         if command == BotCommand.PREFIX:
             if not additional_args:
                 # reply with prefix here
@@ -84,10 +85,14 @@ class BonkBot(discord.Client):
         elif command == BotCommand.BONKS:
             if not additional_args or len(additional_args) < 1:
                 top_users = self.__data_service.get_top_bonked_users(cached_guild.id)
+                users_string = ""
+                for user in top_users:
+                    username = (
+                        await message.guild.fetch_member(user.discord_id)
+                    ).display_name
+                    users_string += f"\n{username}: {user.bonk_amount()} bonk(s)"
 
-                # TODO
-                # await message.channel.send(f"**TOP BONKS**")
-                return
+                return f"**TOP BONKS**{users_string}"
 
             matched_users = await message.guild.query_members(additional_args.lower())
 
@@ -95,9 +100,9 @@ class BonkBot(discord.Client):
                 return f"Couldn't find any users by `{additional_args}`!"
 
             matched_user = matched_users[0]
-            user = self.__data_service.get_user(matched_user.id)
+            user = self.__data_service.get_user(matched_user.id, cached_guild.id)
 
-            return f"user {matched_user.display_name} has been bonked {user.bonks} times so far"
+            return f"user {matched_user.display_name} has been bonked {user.bonk_amount()} times so far"
 
         elif command == BotCommand.BONK:
             bonked_user = None
