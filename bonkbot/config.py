@@ -7,3 +7,4 @@ class BotConfig(BaseSettings):
     
     token: str
     log_level: str = "info"
+    db_connection_string: str = "sqlite://"

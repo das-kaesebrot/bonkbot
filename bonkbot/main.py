@@ -20,7 +20,7 @@ def main():
 
         intents = discord.Intents.default()
         intents.message_content = True
-        data_service = DataService()
+        data_service = DataService(config.db_connection_string)
         client = BonkBot(data_service=data_service, intents=intents)
         client.run(config.token, log_handler=None)
         
