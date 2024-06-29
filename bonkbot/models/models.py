@@ -1,9 +1,12 @@
+import hashlib
 from typing import List
-from sqlalchemy import Column, ForeignKey, String, Table
+from datetime import datetime, timedelta
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 
 class Base(DeclarativeBase):
