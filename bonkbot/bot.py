@@ -190,7 +190,7 @@ class BonkBot(discord.Client):
             user.pardon()
             self.__data_service.save_and_commit(user)
             await self.free_user_from_jail(user)
-            return BotMessage.HELP.format(matched_user.display_name)
+            return BotMessage.PARDONED.format(matched_user.display_name)
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
