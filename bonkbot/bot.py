@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import discord
 
@@ -83,9 +82,12 @@ class BonkBot(discord.Client):
         response = await self.__handle_command(
             message, command, additional_args, cached_guild
         )
-
-        if response:
+        
+        if isinstance(response, str):
             await message.channel.send(response)
+        elif isinstance(response, tuple):
+            for msg in response:
+                await message.channel.send(msg)
 
     async def __handle_command(
         self,
@@ -158,12 +160,14 @@ class BonkBot(discord.Client):
             user.bonk()
             self.__data_service.save_and_commit(user)
                         
-            if user.bonk_amount() % cached_guild.horny_jail_bonks == 0:
-                await self._send_to_horny_jail(user)
+            if not user.bonk_amount() % cached_guild.horny_jail_bonks == 0:
+                return BotMessage.BONK.format(
+                    name=bonked_user.display_name, amount=user.bonk_amount()
+                )
+            
+            await self._send_to_horny_jail(user)    
+            return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount()), BotMessage.SENT_TO_JAIL.format(name=bonked_user.display_name, timestamp=int(user.horny_jail_until.timestamp()))
 
-            return BotMessage.BONK.format(
-                name=bonked_user.display_name, amount=user.bonk_amount()
-            )
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
