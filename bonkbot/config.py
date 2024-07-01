@@ -2,13 +2,19 @@
 from typing import Dict, Tuple, Type
 from pydantic_settings import BaseSettings, JsonConfigSettingsSource, PydanticBaseSettingsSource, SettingsConfigDict
 
-
+class GuildConfig(BaseSettings):
+    admin_role: int
+    horny_jail_seconds: int = 600
+    
 class BotConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='BONKBOT_', json_file="config.json")
     
     token: str
     log_level: str = "info"
     db_connection_string: str = "sqlite://"
+    
+    guild_config: Dict[int, GuildConfig] = {}
+    
     @classmethod
     def settings_customise_sources(
         cls,
