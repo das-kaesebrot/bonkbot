@@ -18,6 +18,7 @@ class Guild(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     prefix: Mapped[str] = mapped_column(String(1))
     users: Mapped[List["User"]] = relationship()
+    admin_role: Mapped[int] = mapped_column(nullable=True)
     horny_jail_role: Mapped[int] = mapped_column(nullable=True)
     horny_jail_seconds: Mapped[int] = mapped_column(default=600)
 
