@@ -226,7 +226,7 @@ class BonkBot(discord.Client):
         free_users = self.__data_service.get_all_pending_jail_releases()
 
         for user in free_users:
-            discord_guild = self.get_guild(user.guild.id)
+            discord_guild = self.get_guild(user.guild)
             guild = self.__data_service.get_guild(user.guild)
             horny_jail_role = guild.horny_jail_role
 
@@ -234,7 +234,8 @@ class BonkBot(discord.Client):
                 continue
 
             member = discord_guild.get_member(user.discord_id)
-            await member.remove_roles([horny_jail_role])
+            role = discord_guild.get_role(horny_jail_role)
+            await member.remove_roles(role)
 
         self.__data_service.set_users_free(free_users)
 
@@ -255,4 +256,5 @@ class BonkBot(discord.Client):
             return
 
         member = discord_guild.get_member(user.discord_id)
-        await member.add_roles([horny_jail_role])
+        role = discord_guild.get_role(horny_jail_role)
+        await member.add_roles(role)
