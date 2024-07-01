@@ -53,6 +53,24 @@ class DataService:
         self.__session.add_all([new_user, guild])
 
         return new_user
+    
+    def get_guild_prefix(self, guild: int | discord.guild.Guild) -> str:
+        guild_id = 0
+        if isinstance(guild, discord.guild.Guild):
+            guild_id = guild.id
+        else:
+            guild_id = guild
+
+        select_statement = select(Guild.prefix).where(Guild.id.is_(guild_id))
+
+        prefix = self.__session.scalars(select_statement).one_or_none()
+
+        if prefix:
+            return prefix
+        
+        new_guild = self.get_guild(guild)
+        return new_guild.prefix
+    
 
     def get_guild(self, guild: int | discord.guild.Guild) -> Guild:
         """Gets a guild (server) by the specified guild_id. Always returns a value, either an existing guild or a new one generated on the fly.
