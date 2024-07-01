@@ -3,8 +3,8 @@ from typing import Dict, Tuple, Type
 from pydantic_settings import BaseSettings, JsonConfigSettingsSource, PydanticBaseSettingsSource, SettingsConfigDict
 
 class GuildConfig(BaseSettings):
-    admin_role: int
-    horny_jail_role: int = None
+    admin_role: int | None = None
+    horny_jail_role: int | None = None
     horny_jail_seconds: int = 600
     horny_jail_bonks: int = 10
     
