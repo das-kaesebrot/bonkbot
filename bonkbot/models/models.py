@@ -1,4 +1,4 @@
-import hashlib
+from hashlib import sha3_256
 from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy import DateTime, ForeignKey, String
@@ -26,7 +26,7 @@ class User(Base):
     __tablename__ = "users"
     # Not the actual discord id, since we have to be scoped to a guild -> generate a new value instead
     # The discord id is scoped across all of discord
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[str] = mapped_column(primary_key=True)
     discord_id: Mapped[int] = mapped_column()
     bonks: Mapped[List["Bonk"]] = relationship()
     guild: Mapped["Guild"] = mapped_column(ForeignKey("guilds.id"))
@@ -44,11 +44,8 @@ class User(Base):
         self.horny_jail_until = jail_start + timedelta(seconds=jail_time_seconds)
 
     @staticmethod
-    def get_id(discord_id: int, guild_id: int) -> int:
-        digest = hashlib.shake_256(f"{discord_id}{guild_id}".encode(encoding="utf-8")).digest(
-            4
-        )  # collision free?
-        return int.from_bytes(digest)
+    def get_id(discord_id: int, guild_id: int) -> str:
+        return sha3_256(f"{discord_id}{guild_id}").hexdigest()
 
 
 class Bonk(Base):
