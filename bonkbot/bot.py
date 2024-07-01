@@ -26,7 +26,7 @@ class BonkBot(discord.Client):
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
-        self.__logger.info(f"Logged on as {self.user}")
+        self.__logger.info(f"Logged on as '{self.user}'")
 
     async def on_message(self, message: discord.Message):
         cached_guild = self.__data_service.get_guild(message.guild)
