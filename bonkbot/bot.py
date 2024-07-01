@@ -152,10 +152,7 @@ class BonkBot(discord.Client):
             return f"**🔨 bonk {bonked_user.display_name}**\n\n_user has been bonked {user.bonk_amount()} times so far_"
 
         elif command == BotCommand.HELP:
-            available_commands = [
-                cached_guild.prefix + command_enum for command_enum in BotCommand.list()
-            ]
-            return f"Available commands: `{'`, `'.join(available_commands)}`"
+            return BotMessage.HELP
         
     async def _is_admin(self, user: User):
         guild_id = user.guild.id
