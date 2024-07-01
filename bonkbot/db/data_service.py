@@ -100,7 +100,7 @@ class DataService:
         self.__session.commit()
         self.__session.flush()
         
-    def get_all_free_users(self) -> list[User]:
+    def get_all_pending_jail_releases(self) -> list[User]:
         """Returns all users that should be released from horny jail.
         This is determined based on the current timestamp and the user's `horny_jail_until` prop.
         If the current time is later than the user's prop, jail time is over.
