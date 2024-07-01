@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import discord
 
@@ -184,3 +185,38 @@ class BonkBot(discord.Client):
         
         return member.get_role(admin_role) is not None
     
+    def sync_horny_jails(self):
+        loop = asyncio.get_event_loop()        
+        loop.run_until_complete(self.__async_horny_jails())
+        
+    async def __async_horny_jails(self):
+        free_users = self.__data_service.get_all_pending_jail_releases()
+        
+        for user in free_users:
+            guild = self.get_guild(user.guild.id)
+            horny_jail_role = user.guild.horny_jail_role
+            
+            if not guild or not horny_jail_role:
+                continue
+            
+            member = guild.get_member(user.discord_id)
+            await member.remove_roles([horny_jail_role])
+        
+        self.__data_service.set_users_free(free_users)
+    
+    async def _send_to_horny_jail(self, user: User):
+        # don't actually do anything if there is no horny jail role set yet
+        if not user.guild.horny_jail_role:
+            return
+        
+        user.send_to_horny_jail()
+        
+        guild = self.get_guild(user.guild.id)
+        horny_jail_role = user.guild.horny_jail_role
+        
+        if not guild:
+            return
+        
+        member = guild.get_member(user.discord_id)
+        await member.add_roles([horny_jail_role])
+        
