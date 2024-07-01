@@ -219,18 +219,19 @@ class BonkBot(discord.Client):
         self.__data_service.set_users_free(free_users)
     
     async def _send_to_horny_jail(self, user: User):
+        guild = self.__data_service.get_guild(user.guild)
+        
         # don't actually do anything if there is no horny jail role set yet
-        if not user.guild.horny_jail_role:
+        if not guild.horny_jail_role:
             return
         
-        user.send_to_horny_jail()
+        user.send_to_horny_jail(guild.horny_jail_seconds)
+        horny_jail_role = guild.horny_jail_role
         
-        guild = self.get_guild(user.guild.id)
-        horny_jail_role = user.guild.horny_jail_role
-        
-        if not guild:
+        discord_guild = self.get_guild(guild.id)        
+        if not discord_guild:
             return
         
-        member = guild.get_member(user.discord_id)
+        member = discord_guild.get_member(user.discord_id)
         await member.add_roles([horny_jail_role])
         
