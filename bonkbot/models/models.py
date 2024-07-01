@@ -45,7 +45,7 @@ class User(Base):
 
     @staticmethod
     def get_id(discord_id: int, guild_id: int) -> str:
-        return sha3_256(f"{discord_id}{guild_id}").hexdigest()
+        return sha3_256(f"{discord_id}{guild_id}".encode("utf-8")).hexdigest()
 
 
 class Bonk(Base):
