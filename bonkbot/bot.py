@@ -174,7 +174,7 @@ class BonkBot(discord.Client):
         
     
     async def _is_admin(self, user: User):
-        guild_id = user.guild.id
+        guild_id = user.guild
         guild_config = self.__config.guild_config.get(guild_id)
         
         # allow everyone to manage when there is no guild config
