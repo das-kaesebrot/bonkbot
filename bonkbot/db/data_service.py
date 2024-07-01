@@ -1,5 +1,6 @@
+from datetime import datetime
 import discord
-from sqlalchemy import URL, create_engine, Engine, desc, func, select
+from sqlalchemy import URL, and_, create_engine, Engine, desc, func, select
 from sqlalchemy.orm import Session, aliased
 
 from ..models.models import Base, Bonk, User, Guild
@@ -98,3 +99,35 @@ class DataService:
         self.__session.add(object)
         self.__session.commit()
         self.__session.flush()
+        
+    def get_all_free_users(self) -> list[User]:
+        """Returns all users that should be released from horny jail.
+        This is determined based on the current timestamp and the user's `horny_jail_until` prop.
+        If the current time is later than the user's prop, jail time is over.
+        If the horny_jail_until prop is `None` (NULL), a user is considered free.
+
+        Returns:
+            list[User]: The free users
+        """
+        now = datetime.now()
+        
+        select_statement = select(User).where(and_(User.horny_jail_until, User.horny_jail_until > now))
+        free_users = self.__session.scalars(select_statement).all()
+        return free_users
+    
+    def set_users_free(self, users: list[User]):
+        """Set the horny jail prop to NULL in the database so that the user is considered free again.
+
+        Args:
+            users (list[User]): A list of users to set free
+        """
+        changed_users = []
+        
+        for user in users:
+            user.horny_jail_until = None
+            changed_users.append(user)
+            
+        self.__session.add_all(changed_users)
+        self.__session.commit()
+        self.__session.flush()
+        
