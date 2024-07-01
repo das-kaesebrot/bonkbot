@@ -7,7 +7,6 @@ name = "pypi"
 "discord.py" = "2.3.*"
 SQLAlchemy = "2.0.*"
 pydantic-settings = "2.3.*"
-schedule = "1.2.*"
 
 [dev-packages]
 flake8 = "7.1.*"
