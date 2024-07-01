@@ -4,6 +4,8 @@ import discord
 from .db.data_service import DataService
 from .enums.bot_command import BotCommand
 from .config import BotConfig
+from .constants.bot_message import BotMessage
+from .constants.bot_error import BotError
 
 
 class BonkBot(discord.Client):
@@ -76,14 +78,14 @@ class BonkBot(discord.Client):
         if command == BotCommand.PREFIX:
             if not additional_args:
                 # reply with prefix here
-                return f"Guild is using prefix `{cached_guild.prefix}`"
+                return BotMessage.GUILD_PREFIX_INFO.format(cached_guild.prefix)
 
             if len(additional_args) != 1 or additional_args == " ":
-                return f"⚠️ Invalid prefix supplied! Prefix has to be a single non-white space character. Given value: `{additional_args}`"
+                return BotError.INVALID_PREFIX.format(additional_args)
 
             cached_guild.prefix = additional_args
             self.__data_service.save_and_commit(cached_guild)
-            return f"Set guild command prefix to `{additional_args}`"
+            return BotMessage.GUILD_PREFIX_SET.format(additional_args)
 
         elif command == BotCommand.BONKS:
             if not additional_args or len(additional_args) < 1:
@@ -100,12 +102,12 @@ class BonkBot(discord.Client):
             matched_users = await message.guild.query_members(additional_args.lower())
 
             if len(matched_users) < 1:
-                return f"⚠️ Couldn't find any users by `{additional_args}`"
+                return BotError.NO_USER_FOUND.format(additional_args)
 
             matched_user = matched_users[0]
             user = self.__data_service.get_user(matched_user.id, cached_guild.id)
 
-            return f"User **{matched_user.display_name}** has been bonked {user.bonk_amount()} times so far"
+            return BotMessage.USER_BONKS_INFO.format(name=matched_user.display_name, amount=user.bonk_amount())
 
         elif command == BotCommand.BONK:
             bonked_user = None
@@ -125,7 +127,7 @@ class BonkBot(discord.Client):
                 bonked_user = message.mentions[0]
 
             elif not additional_args or len(additional_args) < 1:
-                return "⚠️ User needs to be specified!"
+                return BotError.MISSING_USER
 
             if not bonked_user:
                 matched_users = await message.guild.query_members(
@@ -133,7 +135,7 @@ class BonkBot(discord.Client):
                 )
 
                 if len(matched_users) < 1:
-                    return f"⚠️ Couldn't find any users by `{additional_args}`!"
+                    return BotError.NO_USER_FOUND.format(additional_args)
 
                 bonked_user = matched_users[0]
 
