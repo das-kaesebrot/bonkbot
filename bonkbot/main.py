@@ -21,7 +21,7 @@ def main():
         intents = discord.Intents.default()
         intents.message_content = True
         data_service = DataService(connection_string=config.db_connection_string)
-        client = BonkBot(data_service=data_service, intents=intents)
+        client = BonkBot(data_service=data_service, intents=intents, config=config)
         client.run(config.token, log_handler=None)
         
     except ValidationError as e:

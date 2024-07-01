@@ -3,11 +3,12 @@ import discord
 
 from .db.data_service import DataService
 from .enums.bot_command import BotCommand
-from .models.models import Guild
+from .config import BotConfig
 
 
 class BonkBot(discord.Client):
     __data_service: DataService
+    __config: BotConfig
     __logger = logging.getLogger("bot")
 
     def __init__(
@@ -15,9 +16,11 @@ class BonkBot(discord.Client):
         *,
         data_service: DataService,
         intents: discord.Intents,
+        config: BotConfig,
         **options,
     ) -> None:
         self.__data_service = data_service
+        self.__config = config
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
