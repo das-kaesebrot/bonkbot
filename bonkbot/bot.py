@@ -32,18 +32,20 @@ class BonkBot(discord.Client):
         self.__logger.info(f"Logged on as '{self.user}'")
 
     async def on_message(self, message: discord.Message):
-        cached_guild = self.__data_service.get_guild(message.guild)
+        guild_prefix = self.__data_service.get_guild_prefix(message.guild.id)
 
         # get message with all whitespace around it removed
         message_content = message.content.strip().lower()
 
         # ignore all messages not starting with our prefix
         # but allow messages containing just the word bonk
-        if not message_content.startswith(cached_guild.prefix) and message_content != BotCommand.BONK:
+        if not message_content.startswith(guild_prefix) and message_content != BotCommand.BONK:
             return
+        
+        cached_guild = self.__data_service.get_guild(message.guild.id)
 
         # remove the prefix
-        message_content = message_content.removeprefix(cached_guild.prefix)
+        message_content = message_content.removeprefix(guild_prefix)
 
         # don't respond to ourselves
         if message.author == self.user:
