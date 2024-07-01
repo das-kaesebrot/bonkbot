@@ -132,7 +132,7 @@ class BonkBot(discord.Client):
                     username = (
                         await message.guild.fetch_member(user.discord_id)
                     ).display_name
-                    users_string += f"\n**{username}**: {user.bonk_amount()} bonk{'s' if user.bonk_amount() == 1 else ''}"
+                    users_string += f"\n**{username}**: {user.bonk_amount()} bonk{'' if user.bonk_amount() == 1 else 's'}"
                     
                     if user.horny_jail_until:
                         users_string += f" - in horny jail until <t:{int(user.horny_jail_until.timestamp())}>"
