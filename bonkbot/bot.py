@@ -90,6 +90,10 @@ class BonkBot(discord.Client):
                 self.__logger.debug(f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'")
                 return
             
+            # special case, allow reset as a keyword to go back to the exclamation mark
+            if additional_args.lower() == "reset":
+                additional_args = "!"
+            
             if len(additional_args) != 1 or additional_args == " ":
                 return BotError.INVALID_PREFIX.format(additional_args)
 
