@@ -3,6 +3,7 @@ import discord
 
 from .db.data_service import DataService
 from .enums.bot_command import BotCommand
+from .models.models import Guild, User
 from .config import BotConfig
 from .constants.bot_message import BotMessage
 from .constants.bot_error import BotError
@@ -151,3 +152,22 @@ class BonkBot(discord.Client):
             ]
             return f"Available commands: `{'`, `'.join(available_commands)}`"
         
+    async def _is_admin(self, user: User):
+        guild_id = user.guild.id
+        guild_config = self.__config.guild_config.get(guild_id)
+        
+        # allow everyone to manage when there is no guild config
+        if not guild_config: return True
+        
+        admin_role = guild_config.admin_role
+        
+        guild = self.get_guild(guild_id)
+        if not guild:
+            return True
+        
+        member = guild.get_member(user.discord_id)
+        if not member:
+            raise ValueError(f"Couldn't find member with discord id '{user.discord_id}' in guild '{guild_id}'")
+        
+        return member.get_role(admin_role) is not None
+    
