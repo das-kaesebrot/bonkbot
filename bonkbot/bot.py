@@ -184,12 +184,10 @@ class BonkBot(discord.Client):
     
     async def _is_admin(self, user: User):
         guild_id = user.guild
-        guild_config = self.__config.guild_config.get(guild_id)
+        admin_role = self.__data_service.get_guild(guild_id).admin_role
         
-        # allow everyone to manage when there is no guild config
-        if not guild_config: return True
-        
-        admin_role = guild_config.admin_role
+        # allow everyone to manage when there is no admin role set
+        if not admin_role: return True
         
         guild = self.get_guild(guild_id)
         if not guild:
