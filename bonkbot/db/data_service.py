@@ -94,9 +94,6 @@ class DataService:
 
         return top_users
 
-    def commit_db(self) -> None:
-        self.__session.commit()
-
     def save_and_commit(self, object):
         self.__session.add(object)
         self.__session.commit()
