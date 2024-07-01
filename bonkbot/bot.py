@@ -13,7 +13,7 @@ from .constants.bot_error import BotError
 class BonkBot(discord.Client):
     __data_service: DataService
     __config: BotConfig
-    __logger = logging.getLogger("bot")
+    __logger: logging.Logger
 
     def __init__(
         self,
@@ -23,6 +23,7 @@ class BonkBot(discord.Client):
         config: BotConfig,
         **options,
     ) -> None:
+        self.__logger = logging.getLogger(__name__)
         self.__data_service = data_service
         self.__config = config
         super().__init__(intents=intents, **options)
