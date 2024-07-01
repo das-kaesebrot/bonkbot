@@ -26,15 +26,15 @@ class BonkBot(discord.Client):
         self.__logger = logging.getLogger(__name__)
         self.__data_service = data_service
         self.__config = config
-        
+
         # synchronize settings to database in beginning
         for guild_id, guild_config in config.guild_config.items():
             guild = self.__data_service.get_guild(guild_id)
-            
+
             guild.admin_role = guild_config.admin_role
             guild.horny_jail_role = guild_config.horny_jail_role
             guild.horny_jail_seconds = guild_config.horny_jail_seconds
-        
+
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
@@ -48,9 +48,12 @@ class BonkBot(discord.Client):
 
         # ignore all messages not starting with our prefix
         # but allow messages containing just the word bonk
-        if not message_content.startswith(guild_prefix) and message_content != BotCommand.BONK:
+        if (
+            not message_content.startswith(guild_prefix)
+            and message_content != BotCommand.BONK
+        ):
             return
-        
+
         cached_guild = self.__data_service.get_guild(message.guild.id)
 
         # remove the prefix
@@ -95,14 +98,18 @@ class BonkBot(discord.Client):
                 return BotMessage.GUILD_PREFIX_INFO.format(cached_guild.prefix)
 
             # only allow admins to change prefix, ignore message otherwise
-            if not await self._is_admin(self.__data_service.get_user(message.author.id, cached_guild.id)):
-                self.__logger.debug(f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'")
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
                 return
-            
+
             # special case, allow reset as a keyword to go back to the exclamation mark
             if additional_args.lower() == "reset":
                 additional_args = "!"
-            
+
             if len(additional_args) != 1 or additional_args == " ":
                 return BotError.INVALID_PREFIX.format(additional_args)
 
@@ -123,17 +130,19 @@ class BonkBot(discord.Client):
                 return f"**TOP BONKS**{users_string}"
 
             matched_user = await self.__get_user_from_message(message, additional_args)
-            
+
             if not matched_user:
                 return BotError.NO_USER_FOUND.format(additional_args)
 
             user = self.__data_service.get_user(matched_user.id, cached_guild.id)
 
-            return BotMessage.USER_BONKS_INFO.format(name=matched_user.display_name, amount=user.bonk_amount())
+            return BotMessage.USER_BONKS_INFO.format(
+                name=matched_user.display_name, amount=user.bonk_amount()
+            )
 
         elif command == BotCommand.BONK:
             bonked_user = await self.__get_user_from_message(message, additional_args)
-            
+
             if not bonked_user:
                 return BotError.NO_USER_FOUND.format(additional_args)
 
@@ -141,97 +150,98 @@ class BonkBot(discord.Client):
             user.bonk()
             self.__data_service.save_and_commit(user)
 
-            return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount())
+            return BotMessage.BONK.format(
+                name=bonked_user.display_name, amount=user.bonk_amount()
+            )
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
-        
-    async def __get_user_from_message(self, message: discord.Message, additional_args: str) -> discord.User | discord.Member | None:
+
+    async def __get_user_from_message(
+        self, message: discord.Message, additional_args: str
+    ) -> discord.User | discord.Member | None:
         # if the message is a reference (reply) to another message,
         # return the author of the referenced message
         if message.reference:
             resolved_reference = message.reference.resolved
-            
+
             # return author of the referenced message
             if resolved_reference:
                 return resolved_reference.author
-            
+
             # if the message is not resolved yet, resolve it and then return the author
             return (
-                await message.channel.fetch_message(
-                    message.reference.message_id
-                )
+                await message.channel.fetch_message(message.reference.message_id)
             ).author
-            
+
         # if someone was mentioned, return the first mention
         if len(message.mentions) > 0:
             return message.mentions[0]
-        
+
         # if we weren't able to identify anyone yet, check if a username string was in the message
         # --> return None if there is no additional info
         if not additional_args or len(additional_args) < 1:
             return
 
         # try matching a user by querying members
-        matched_users = await message.guild.query_members(
-            additional_args.lower()
-        )
-        
+        matched_users = await message.guild.query_members(additional_args.lower())
+
         # if there was a match, return the first result
         if len(matched_users) > 0:
             return matched_users[0]
-        
-    
+
     async def _is_admin(self, user: User):
         guild_id = user.guild
         admin_role = self.__data_service.get_guild(guild_id).admin_role
-        
+
         # allow everyone to manage when there is no admin role set
-        if not admin_role: return True
-        
+        if not admin_role:
+            return True
+
         guild = self.get_guild(guild_id)
         if not guild:
             return True
-        
+
         member = guild.get_member(user.discord_id)
         if not member:
-            raise ValueError(f"Couldn't find member with discord id '{user.discord_id}' in guild '{guild_id}'")
-        
+            raise ValueError(
+                f"Couldn't find member with discord id '{user.discord_id}' in guild '{guild_id}'"
+            )
+
         return member.get_role(admin_role) is not None
-    
+
     def sync_horny_jails(self):
-        loop = asyncio.get_event_loop()        
+        loop = asyncio.get_event_loop()
         loop.run_until_complete(self.__async_horny_jails())
-        
+
     async def __async_horny_jails(self):
         free_users = self.__data_service.get_all_pending_jail_releases()
-        
+
         for user in free_users:
             guild = self.get_guild(user.guild.id)
             horny_jail_role = user.guild.horny_jail_role
-            
+
             if not guild or not horny_jail_role:
                 continue
-            
+
             member = guild.get_member(user.discord_id)
             await member.remove_roles([horny_jail_role])
-        
+
         self.__data_service.set_users_free(free_users)
-    
+
     async def _send_to_horny_jail(self, user: User):
         guild = self.__data_service.get_guild(user.guild)
-        
+
         # don't actually do anything if there is no horny jail role set yet
         if not guild.horny_jail_role:
             return
-        
+
         user.send_to_horny_jail(guild.horny_jail_seconds)
         horny_jail_role = guild.horny_jail_role
-        
-        discord_guild = self.get_guild(guild.id)        
+
+        discord_guild = self.get_guild(guild.id)
         if not discord_guild:
             return
-        
+
         member = discord_guild.get_member(user.discord_id)
         await member.add_roles([horny_jail_role])
-        
