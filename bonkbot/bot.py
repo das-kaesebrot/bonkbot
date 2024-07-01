@@ -124,7 +124,7 @@ class BonkBot(discord.Client):
             user.bonk()
             self.__data_service.save_and_commit(user)
 
-            return f"**🔨 bonk {bonked_user.display_name}**\n\n_user has been bonked {user.bonk_amount()} times so far_"
+            return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount())
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP
