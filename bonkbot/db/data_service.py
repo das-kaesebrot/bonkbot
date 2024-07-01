@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 import discord
 from sqlalchemy import URL, and_, create_engine, Engine, desc, func, select
 from sqlalchemy.orm import Session, aliased
@@ -8,13 +9,21 @@ from ..models.models import Base, Bonk, User, Guild
 class DataService:
     __engine: Engine = None
     __session = None
+    _logger: logging.Logger
 
     def __init__(self, *, connection_string: str | URL = "sqlite://") -> None:
-        self.__engine = create_engine(connection_string, echo=True)
+        self._logger = logging.getLogger(__name__)
+        self._logger.info(f"Creating database engine with connection string '{connection_string}'")
+        
+        # only echo SQL statements if we're logging at the debug level
+        echo = self._logger.getEffectiveLevel() <= logging.DEBUG
+        
+        self.__engine = create_engine(connection_string, echo=echo)
         Base.metadata.create_all(self.__engine)
         self.__session = Session(self.__engine)
 
     def __del__(self):
+        self._logger.info("Shutting down")
         self.__session.close()
 
     def get_user(self, discord_id: int, guild_id: int) -> User:
