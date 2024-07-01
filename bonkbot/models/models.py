@@ -40,9 +40,9 @@ class User(Base):
         return len(self.bonks)
 
     def send_to_horny_jail(
-        self, jail_start: datetime = datetime.now()
+        self, jail_time_seconds: int, jail_start: datetime = datetime.now()
     ):
-        self.horny_jail_until = jail_start + timedelta(seconds=self.guild.horny_jail_seconds)
+        self.horny_jail_until = jail_start + timedelta(seconds=jail_time_seconds)
 
     @staticmethod
     def get_id(discord_id: int, guild_id: int) -> str:
