@@ -1,5 +1,6 @@
 class BotMessage():
     BONK = "**🔨 bonk {name}**\n\n_User has been bonked {amount} times so far_"
+    SENT_TO_JAIL = "🚨 WEE WOO 🚨\n**{name}** just got sent to horny jail until <t:{timestamp}>"
     
     GUILD_PREFIX_INFO = "Guild is using prefix `{}`"
     GUILD_PREFIX_SET = "Set guild command prefix to `{}`"
