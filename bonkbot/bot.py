@@ -243,6 +243,8 @@ class BonkBot(discord.Client):
 
         user.send_to_horny_jail(guild.horny_jail_seconds)
         horny_jail_role = guild.horny_jail_role
+        
+        self.__data_service.save_and_commit(user)
 
         discord_guild = self.get_guild(guild.id)
         if not discord_guild:
