@@ -8,12 +8,14 @@ from .models.models import Guild, User
 from .config import BotConfig
 from .constants.bot_message import BotMessage
 from .constants.bot_error import BotError
+from .tasks.jail_sync import JailSync
 
 
 class BonkBot(discord.Client):
     __data_service: DataService
     __config: BotConfig
     __logger: logging.Logger
+    jail_sync_job: JailSync
 
     def __init__(
         self,
@@ -35,11 +37,13 @@ class BonkBot(discord.Client):
             guild.horny_jail_role = guild_config.horny_jail_role
             guild.horny_jail_seconds = guild_config.horny_jail_seconds
             guild.horny_jail_bonks = guild_config.horny_jail_bonks
-
+            
+        self.jail_sync_job = JailSync(self)
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
         self.__logger.info(f"Logged on as '{self.user}'")
+        self.jail_sync_job.sync_job.start()
 
     async def on_message(self, message: discord.Message):
         guild_prefix = self.__data_service.get_guild_prefix(message.guild.id)
@@ -214,11 +218,8 @@ class BonkBot(discord.Client):
 
         return member.get_role(admin_role) is not None
 
-    def sync_horny_jails(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.__async_horny_jails())
-
-    async def __async_horny_jails(self):
+    async def sync_horny_jails(self):
+        self.__logger.info("Running jail synchronisation")
         free_users = self.__data_service.get_all_pending_jail_releases()
 
         for user in free_users:
