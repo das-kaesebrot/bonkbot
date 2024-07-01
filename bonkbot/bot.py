@@ -34,6 +34,7 @@ class BonkBot(discord.Client):
             guild.admin_role = guild_config.admin_role
             guild.horny_jail_role = guild_config.horny_jail_role
             guild.horny_jail_seconds = guild_config.horny_jail_seconds
+            guild.horny_jail_bonks = guild_config.horny_jail_bonks
 
         super().__init__(intents=intents, **options)
 
