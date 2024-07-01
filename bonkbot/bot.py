@@ -81,6 +81,11 @@ class BonkBot(discord.Client):
                 # reply with prefix here
                 return BotMessage.GUILD_PREFIX_INFO.format(cached_guild.prefix)
 
+            # only allow admins to change prefix, ignore message otherwise
+            if not self._is_admin(self.__data_service.get_user(message.author.id)):
+                self.__logger.debug(f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'")
+                return
+            
             if len(additional_args) != 1 or additional_args == " ":
                 return BotError.INVALID_PREFIX.format(additional_args)
 
