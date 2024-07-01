@@ -105,45 +105,20 @@ class BonkBot(discord.Client):
 
                 return f"**TOP BONKS**{users_string}"
 
-            matched_users = await message.guild.query_members(additional_args.lower())
-
-            if len(matched_users) < 1:
+            matched_user = await self.__get_user_from_message(message, additional_args)
+            
+            if not matched_user:
                 return BotError.NO_USER_FOUND.format(additional_args)
 
-            matched_user = matched_users[0]
             user = self.__data_service.get_user(matched_user.id, cached_guild.id)
 
             return BotMessage.USER_BONKS_INFO.format(name=matched_user.display_name, amount=user.bonk_amount())
 
         elif command == BotCommand.BONK:
-            bonked_user = None
-            if message.reference:
-                resolved_reference = message.reference.resolved
-
-                if resolved_reference:
-                    bonked_user = resolved_reference.author
-                else:
-                    bonked_user = (
-                        await message.channel.fetch_message(
-                            message.reference.message_id
-                        )
-                    ).author
-
-            elif len(message.mentions) > 0:
-                bonked_user = message.mentions[0]
-
-            elif not additional_args or len(additional_args) < 1:
-                return BotError.MISSING_USER
-
+            bonked_user = await self.__get_user_from_message(message, additional_args)
+            
             if not bonked_user:
-                matched_users = await message.guild.query_members(
-                    additional_args.lower()
-                )
-
-                if len(matched_users) < 1:
-                    return BotError.NO_USER_FOUND.format(additional_args)
-
-                bonked_user = matched_users[0]
+                return BotError.NO_USER_FOUND.format(additional_args)
 
             user = self.__data_service.get_user(bonked_user.id, cached_guild.id)
             user.bonk()
@@ -154,6 +129,42 @@ class BonkBot(discord.Client):
         elif command == BotCommand.HELP:
             return BotMessage.HELP
         
+    async def __get_user_from_message(self, message: discord.Message, additional_args: str) -> discord.User | discord.Member | None:
+        # if the message is a reference (reply) to another message,
+        # return the author of the referenced message
+        if message.reference:
+            resolved_reference = message.reference.resolved
+            
+            # return author of the referenced message
+            if resolved_reference:
+                return resolved_reference.author
+            
+            # if the message is not resolved yet, resolve it and then return the author
+            return (
+                await message.channel.fetch_message(
+                    message.reference.message_id
+                )
+            ).author
+            
+        # if someone was mentioned, return the first mention
+        if len(message.mentions) > 0:
+            return message.mentions[0]
+        
+        # if we weren't able to identify anyone yet, check if a username string was in the message
+        # --> return None if there is no additional info
+        if not additional_args or len(additional_args) < 1:
+            return
+
+        # try matching a user by querying members
+        matched_users = await message.guild.query_members(
+            additional_args.lower()
+        )
+        
+        # if there was a match, return the first result
+        if len(matched_users) > 0:
+            return matched_users[0]
+        
+    
     async def _is_admin(self, user: User):
         guild_id = user.guild.id
         guild_config = self.__config.guild_config.get(guild_id)
