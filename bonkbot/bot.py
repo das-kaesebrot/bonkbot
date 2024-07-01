@@ -135,7 +135,7 @@ class BonkBot(discord.Client):
             return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount())
 
         elif command == BotCommand.HELP:
-            return BotMessage.HELP
+            return BotMessage.HELP.format(prefix=cached_guild.prefix)
         
     async def __get_user_from_message(self, message: discord.Message, additional_args: str) -> discord.User | discord.Member | None:
         # if the message is a reference (reply) to another message,
