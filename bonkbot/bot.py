@@ -169,6 +169,15 @@ class BonkBot(discord.Client):
             return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount()), BotMessage.SENT_TO_JAIL.format(name=bonked_user.display_name, timestamp=int(user.horny_jail_until.timestamp()))
         
         elif command == BotCommand.PARDON:
+            # only allow admins to change prefix, ignore message otherwise
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
+                return
+            
             matched_user = await self.__get_user_from_message(message, additional_args)
 
             if not matched_user:
