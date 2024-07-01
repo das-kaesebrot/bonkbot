@@ -138,7 +138,7 @@ class DataService:
         """
         now = datetime.now()
         
-        select_statement = select(User).where(and_(User.horny_jail_until, User.horny_jail_until > now))
+        select_statement = select(User).where(and_(User.horny_jail_until, User.horny_jail_until < now))
         free_users = self.__session.scalars(select_statement).all()
         return free_users
     
