@@ -13,6 +13,7 @@ def main():
         level=logging.INFO,
     )
     logger = logging.getLogger()
+    data_service = None
 
     try:
         config = BotConfig()
@@ -31,6 +32,8 @@ def main():
     except Exception as e:
         logger.exception("Exception occured")
         exit(2)
+    finally:
+        if data_service: del data_service
 
 
 if __name__ == "__main__":
