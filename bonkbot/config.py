@@ -4,7 +4,9 @@ from pydantic_settings import BaseSettings, JsonConfigSettingsSource, PydanticBa
 
 class GuildConfig(BaseSettings):
     admin_role: int
+    horny_jail_role: int = None
     horny_jail_seconds: int = 600
+    horny_jail_bonks: int = 10
     
 class BotConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='BONKBOT_', json_file="config.json")
