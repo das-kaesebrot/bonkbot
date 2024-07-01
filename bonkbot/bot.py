@@ -167,7 +167,21 @@ class BonkBot(discord.Client):
             
             await self._send_to_horny_jail(user)    
             return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount()), BotMessage.SENT_TO_JAIL.format(name=bonked_user.display_name, timestamp=int(user.horny_jail_until.timestamp()))
+        
+        elif command == BotCommand.PARDON:
+            matched_user = await self.__get_user_from_message(message, additional_args)
 
+            if not matched_user:
+                return BotError.NO_USER_FOUND.format(additional_args)
+            
+            user = self.__data_service.get_user(matched_user.id, cached_guild.id)
+            if not user.horny_jail_until:                
+                return
+            
+            user.pardon()
+            self.__data_service.save_and_commit(user)
+            await self.free_user_from_jail(user)
+            return BotMessage.HELP.format(matched_user.display_name)
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
@@ -230,18 +244,21 @@ class BonkBot(discord.Client):
         free_users = self.__data_service.get_all_pending_jail_releases()
 
         for user in free_users:
-            discord_guild = self.get_guild(user.guild)
-            guild = self.__data_service.get_guild(user.guild)
-            horny_jail_role = guild.horny_jail_role
-
-            if not (discord_guild or horny_jail_role):
-                continue
-
-            member = discord_guild.get_member(user.discord_id)
-            role = discord_guild.get_role(horny_jail_role)
-            await member.remove_roles(role)
+            await self.free_user_from_jail(user)
 
         self.__data_service.set_users_free(free_users)
+    
+    async def free_user_from_jail(self, user: User):
+        discord_guild = self.get_guild(user.guild)
+        guild = self.__data_service.get_guild(user.guild)
+        horny_jail_role = guild.horny_jail_role
+
+        if not (discord_guild or horny_jail_role):
+            return
+
+        member = discord_guild.get_member(user.discord_id)
+        role = discord_guild.get_role(horny_jail_role)
+        await member.remove_roles(role)
 
     async def _send_to_horny_jail(self, user: User):
         guild = self.__data_service.get_guild(user.guild)

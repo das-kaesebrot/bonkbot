@@ -6,6 +6,7 @@ class BotCommand(StrEnum):
     BONKS = "bonks"
     PREFIX = "bonkprefix"
     HELP = "bonkhelp"
+    PARDON = "bonkpardon"
     
     @staticmethod
     def list():

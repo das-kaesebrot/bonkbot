@@ -39,6 +39,9 @@ class User(Base):
 
     def bonk_amount(self):
         return len(self.bonks)
+    
+    def pardon(self):
+        self.horny_jail_until = None
 
     def send_to_horny_jail(
         self, jail_time_seconds: int
