@@ -26,6 +26,15 @@ class BonkBot(discord.Client):
         self.__logger = logging.getLogger(__name__)
         self.__data_service = data_service
         self.__config = config
+        
+        # synchronize settings to database in beginning
+        for guild_id, guild_config in config.guild_config.items():
+            guild = self.__data_service.get_guild(guild_id)
+            
+            guild.admin_role = guild_config.admin_role
+            guild.horny_jail_role = guild_config.horny_jail_role
+            guild.horny_jail_seconds = guild_config.horny_jail_seconds
+        
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
