@@ -42,11 +42,11 @@ class BotMessage():
 `{prefix}bonkjail` - Get the role that is assigned as horny jail
 `{prefix}bonkjail [role mention]` - Set the horny jail role
 
-`{prefix}bonkjailtime`- Get the horny jail time (in seconds)
-`{prefix}bonkjailtime [jail seconds]`- Set the horny jail time (in seconds)
+`{prefix}bonkjailtime` - Get the horny jail time (in seconds)
+`{prefix}bonkjailtime [jail seconds]` - Set the horny jail time (in seconds)
 
-`{prefix}bonkjailamount`- Get the bonks needed to send a user to horny jail
-`{prefix}bonkjailamount [jail bonks]`- Set the bonks needed to send a user to horny jail
+`{prefix}bonkjailamount` - Get the bonks needed to send a user to horny jail
+`{prefix}bonkjailamount [jail bonks]` - Set the bonks needed to send a user to horny jail
 
 `{prefix}bonkprefix [prefix]` - Set the prefix for this bot's commands
 `{prefix}bonkprefix reset` - Reset the prefix back to `!`
