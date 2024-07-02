@@ -204,7 +204,132 @@ class BonkBot(discord.Client):
             self.__data_service.save_and_commit(user)
             await self._free_user_from_jail(user)
             return BotMessage.PARDONED.format(matched_user.display_name)
+        
+        elif command == BotCommand.JAIL:
+            # only allow admins to immediately send to jail, ignore message otherwise
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
+                return
 
+            matched_user = await self._get_user_from_message(message, additional_args)
+
+            if not matched_user:
+                return BotError.NO_USER_FOUND.format(additional_args)
+
+            user = self.__data_service.get_user(matched_user.id, cached_guild.id)
+            await self._send_to_horny_jail(user)
+            
+            return BotMessage.SENT_TO_JAIL.format(
+                name=bonked_user.matched_user,
+                timestamp=int(user.horny_jail_until.timestamp()),
+            )
+            
+        elif command == BotCommand.JAILROLE:
+            # only allow admins to set jail role, ignore message otherwise
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
+                return
+            
+            if len(additional_args) < 1:
+                return BotMessage.JAIL_ROLE_INFO.format(cached_guild.horny_jail_role)
+            
+            if len(message.role_mentions) != 1:
+                return BotError.MISSING_ROLE_MENTION
+            
+            jail_role_id = message.role_mentions[0].id
+            cached_guild.horny_jail_role = jail_role_id
+            
+            self.__data_service.save_and_commit(cached_guild)
+            
+            return BotMessage.JAIL_ROLE_SET.format(cached_guild.horny_jail_role)
+            
+        elif command == BotCommand.ADMINROLE:
+            # only allow admins to set admin role, ignore message otherwise
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
+                return
+            
+            if len(additional_args) < 1:
+                return BotMessage.ADMIN_ROLE_INFO.format(cached_guild.admin_role)
+            
+            if len(message.role_mentions) != 1:
+                return BotError.MISSING_ROLE_MENTION
+            
+            admin_role_id = message.role_mentions[0].id
+            cached_guild.admin_role = admin_role_id
+            
+            self.__data_service.save_and_commit(cached_guild)
+            
+            return BotMessage.ADMIN_ROLE_SET.format(cached_guild.admin_role)
+        
+        elif command == BotCommand.JAILTIME:
+            # only allow admins to set jail time, ignore message otherwise
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
+                return
+            
+            if len(additional_args) < 1:
+                return BotMessage.JAIL_TIME_INFO.format(cached_guild.horny_jail_seconds)
+            
+            if len(additional_args) != 1:
+                return BotError.MISSING_NUMBER
+            
+            jail_seconds = 0
+            try:
+                jail_seconds = int(additional_args)
+            except ValueError:
+                return BotError.MISSING_NUMBER
+            
+            cached_guild.horny_jail_seconds = jail_seconds
+            
+            self.__data_service.save_and_commit(cached_guild)
+            
+            return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_seconds)
+        
+        elif command == BotCommand.JAILBONKS:
+            # only allow admins to set jail bonks, ignore message otherwise
+            if not await self._is_admin(
+                self.__data_service.get_user(message.author.id, cached_guild.id)
+            ):
+                self.__logger.debug(
+                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
+                )
+                return
+            
+            if len(additional_args) < 1:
+                return BotMessage.JAIL_BONKS_INFO.format(cached_guild.horny_jail_bonks)
+            
+            if len(additional_args) != 1:
+                return BotError.MISSING_NUMBER
+            
+            jail_bonks = 0
+            try:
+                jail_bonks = int(additional_args)
+            except ValueError:
+                return BotError.MISSING_NUMBER
+            
+            cached_guild.horny_jail_bonks = jail_bonks
+            
+            self.__data_service.save_and_commit(cached_guild)
+            
+            return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_bonks)
+        
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
 
