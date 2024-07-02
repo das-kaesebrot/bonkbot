@@ -355,6 +355,9 @@ class BonkBot(discord.Client):
     async def sync_horny_jails(self):
         self.__logger.info("Running jail synchronisation")
         free_users = self.__data_service.get_all_pending_jail_releases()
+        
+        if len(free_users) < 1:
+            return
 
         for user in free_users:
             self.__logger.debug(f"Freeing user '{user.discord_id}' in guild '{user.guild}' from jail")
