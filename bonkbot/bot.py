@@ -238,7 +238,7 @@ class BonkBot(discord.Client):
                 )
                 return
             
-            if len(additional_args) < 1:
+            if not additional_args or len(additional_args) < 1:
                 return BotMessage.JAIL_ROLE_INFO.format(cached_guild.horny_jail_role)
             
             if len(message.role_mentions) != 1:
@@ -261,7 +261,7 @@ class BonkBot(discord.Client):
                 )
                 return
             
-            if len(additional_args) < 1:
+            if not additional_args or len(additional_args) < 1:
                 return BotMessage.ADMIN_ROLE_INFO.format(cached_guild.admin_role)
             
             if len(message.role_mentions) != 1:
@@ -284,7 +284,7 @@ class BonkBot(discord.Client):
                 )
                 return
             
-            if len(additional_args) < 1:
+            if not additional_args or len(additional_args) < 1:
                 return BotMessage.JAIL_TIME_INFO.format(cached_guild.horny_jail_seconds)
             
             if len(additional_args) != 1:
@@ -312,7 +312,7 @@ class BonkBot(discord.Client):
                 )
                 return
             
-            if len(additional_args) < 1:
+            if not additional_args or len(additional_args) < 1:
                 return BotMessage.JAIL_BONKS_INFO.format(cached_guild.horny_jail_bonks)
             
             if len(additional_args) != 1:
