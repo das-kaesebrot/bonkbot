@@ -36,7 +36,7 @@ class BonkBot(discord.Client):
             guild.horny_jail_role = guild_config.horny_jail_role
             guild.horny_jail_seconds = guild_config.horny_jail_seconds
             guild.horny_jail_bonks = guild_config.horny_jail_bonks
-            
+
         self.jail_sync_job = JailSync(self)
         super().__init__(intents=intents, **options)
 
@@ -79,17 +79,17 @@ class BonkBot(discord.Client):
         if len(split_message_content) > 1:
             additional_args = " ".join(split_message_content[1:])
 
-        response = await self.__handle_command(
+        response = await self._handle_command(
             message, command, additional_args, cached_guild
         )
-        
+
         if isinstance(response, str):
             await message.channel.send(response)
         elif isinstance(response, tuple):
             for msg in response:
                 await message.channel.send(msg)
 
-    async def __handle_command(
+    async def _handle_command(
         self,
         message: discord.Message,
         command: BotCommand,
@@ -133,13 +133,13 @@ class BonkBot(discord.Client):
                         await message.guild.fetch_member(user.discord_id)
                     ).display_name
                     users_string += f"\n**{username}**: {user.bonk_amount()} bonk{'' if user.bonk_amount() == 1 else 's'}"
-                    
+
                     if user.horny_jail_until:
                         users_string += f" - in horny jail until <t:{int(user.horny_jail_until.timestamp())}>"
 
                 return f"**TOP BONKS**\n{users_string}"
 
-            matched_user = await self.__get_user_from_message(message, additional_args)
+            matched_user = await self._get_user_from_message(message, additional_args)
 
             if not matched_user:
                 return BotError.NO_USER_FOUND.format(additional_args)
@@ -151,7 +151,7 @@ class BonkBot(discord.Client):
             )
 
         elif command == BotCommand.BONK:
-            bonked_user = await self.__get_user_from_message(message, additional_args)
+            bonked_user = await self._get_user_from_message(message, additional_args)
 
             if not bonked_user:
                 return BotError.NO_USER_FOUND.format(additional_args)
@@ -159,15 +159,20 @@ class BonkBot(discord.Client):
             user = self.__data_service.get_user(bonked_user.id, cached_guild.id)
             user.bonk()
             self.__data_service.save_and_commit(user)
-                        
+
             if not user.bonk_amount() % cached_guild.horny_jail_bonks == 0:
                 return BotMessage.BONK.format(
                     name=bonked_user.display_name, amount=user.bonk_amount()
                 )
-            
-            await self._send_to_horny_jail(user)    
-            return BotMessage.BONK.format(name=bonked_user.display_name, amount=user.bonk_amount()), BotMessage.SENT_TO_JAIL.format(name=bonked_user.display_name, timestamp=int(user.horny_jail_until.timestamp()))
-        
+
+            await self._send_to_horny_jail(user)
+            return BotMessage.BONK.format(
+                name=bonked_user.display_name, amount=user.bonk_amount()
+            ), BotMessage.SENT_TO_JAIL.format(
+                name=bonked_user.display_name,
+                timestamp=int(user.horny_jail_until.timestamp()),
+            )
+
         elif command == BotCommand.PARDON:
             # only allow admins to change prefix, ignore message otherwise
             if not await self._is_admin(
@@ -177,25 +182,25 @@ class BonkBot(discord.Client):
                     f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
                 )
                 return
-            
-            matched_user = await self.__get_user_from_message(message, additional_args)
+
+            matched_user = await self._get_user_from_message(message, additional_args)
 
             if not matched_user:
                 return BotError.NO_USER_FOUND.format(additional_args)
-            
+
             user = self.__data_service.get_user(matched_user.id, cached_guild.id)
-            if not user.horny_jail_until:                
+            if not user.horny_jail_until:
                 return
-            
+
             user.pardon()
             self.__data_service.save_and_commit(user)
-            await self.free_user_from_jail(user)
+            await self._free_user_from_jail(user)
             return BotMessage.PARDONED.format(matched_user.display_name)
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
 
-    async def __get_user_from_message(
+    async def _get_user_from_message(
         self, message: discord.Message, additional_args: str
     ) -> discord.User | discord.Member | None:
         # if the message is a reference (reply) to another message,
@@ -253,11 +258,11 @@ class BonkBot(discord.Client):
         free_users = self.__data_service.get_all_pending_jail_releases()
 
         for user in free_users:
-            await self.free_user_from_jail(user)
+            await self._free_user_from_jail(user)
 
         self.__data_service.set_users_free(free_users)
-    
-    async def free_user_from_jail(self, user: User):
+
+    async def _free_user_from_jail(self, user: User):
         discord_guild = self.get_guild(user.guild)
         guild = self.__data_service.get_guild(user.guild)
         horny_jail_role = guild.horny_jail_role
@@ -278,7 +283,7 @@ class BonkBot(discord.Client):
 
         user.send_to_horny_jail(guild.horny_jail_seconds)
         horny_jail_role = guild.horny_jail_role
-        
+
         self.__data_service.save_and_commit(user)
 
         discord_guild = self.get_guild(guild.id)
