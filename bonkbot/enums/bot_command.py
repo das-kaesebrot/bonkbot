@@ -7,6 +7,11 @@ class BotCommand(StrEnum):
     PREFIX = "bonkprefix"
     HELP = "bonkhelp"
     PARDON = "bonkpardon"
+    ADMINROLE = "bonkadmin"
+    JAILROLE = "bonkjail"
+    JAILTIME = "bonkjailtime"
+    JAILBONKS = "bonkjailamount"
+    JAIL = "hornyjail"
     
     @staticmethod
     def list():
