@@ -391,9 +391,11 @@ class BonkBot(discord.Client):
         free_users = self.__data_service.get_all_pending_jail_releases()
 
         for user in free_users:
+            self.__logger.debug(f"Freeing user '{user.discord_id}' in guild '{user.guild}' from jail")
             await self._free_user_from_jail(user)
 
         self.__data_service.set_users_free(free_users)
+        self.__logger.info(f"Freed {len(free_users)} from jail")
 
     async def _free_user_from_jail(self, user: User):
         discord_guild = await self.fetch_guild(user.guild)
