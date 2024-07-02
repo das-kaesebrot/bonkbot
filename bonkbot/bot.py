@@ -374,7 +374,7 @@ class BonkBot(discord.Client):
         if not admin_role:
             return True
 
-        guild = self.get_guild(guild_id)
+        guild = await self.fetch_guild(guild_id)
         if not guild:
             return True
         
@@ -396,7 +396,7 @@ class BonkBot(discord.Client):
         self.__data_service.set_users_free(free_users)
 
     async def _free_user_from_jail(self, user: User):
-        discord_guild = self.get_guild(user.guild)
+        discord_guild = await self.fetch_guild(user.guild)
         guild = self.__data_service.get_guild(user.guild)
         horny_jail_role = guild.horny_jail_role
 
@@ -419,7 +419,7 @@ class BonkBot(discord.Client):
 
         self.__data_service.save_and_commit(user)
 
-        discord_guild = self.get_guild(guild.id)
+        discord_guild = await self.fetch_guild(guild.id)
         if not discord_guild:
             return
 
