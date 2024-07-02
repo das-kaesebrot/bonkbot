@@ -228,8 +228,8 @@ class BonkBot(discord.Client):
                 timestamp=int(user.horny_jail_until.timestamp()),
             )
             
-        elif command == BotCommand.JAILROLE:
-            # only allow admins to set jail role, ignore message otherwise
+        elif command == BotCommand.ADMINROLE or command == BotCommand.JAILROLE:
+            # only allow admins to set roles, ignore message otherwise
             if not await self._is_admin(
                 self.__data_service.get_user(message.author.id, cached_guild.id)
             ):
@@ -239,43 +239,29 @@ class BonkBot(discord.Client):
                 return
             
             if not additional_args or len(additional_args) < 1:
+                if command == BotCommand.ADMINROLE:
+                    return BotMessage.ADMIN_ROLE_INFO.format(cached_guild.admin_role)
                 return BotMessage.JAIL_ROLE_INFO.format(cached_guild.horny_jail_role)
             
             if len(message.role_mentions) != 1:
                 return BotError.MISSING_ROLE_MENTION
             
-            jail_role_id = message.role_mentions[0].id
-            cached_guild.horny_jail_role = jail_role_id
+            role_id = message.role_mentions[0].id
+            
+            if command == BotCommand.ADMINROLE:
+                cached_guild.admin_role = role_id
+            else:
+                cached_guild.horny_jail_role = role_id
             
             self.__data_service.save_and_commit(cached_guild)
             
+            if command == BotCommand.ADMINROLE:
+                return BotMessage.ADMIN_ROLE_SET.format(cached_guild.admin_role)
+                
             return BotMessage.JAIL_ROLE_SET.format(cached_guild.horny_jail_role)
-            
-        elif command == BotCommand.ADMINROLE:
-            # only allow admins to set admin role, ignore message otherwise
-            if not await self._is_admin(
-                self.__data_service.get_user(message.author.id, cached_guild.id)
-            ):
-                self.__logger.debug(
-                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
-                )
-                return
-            
-            if not additional_args or len(additional_args) < 1:
-                return BotMessage.ADMIN_ROLE_INFO.format(cached_guild.admin_role)
-            
-            if len(message.role_mentions) != 1:
-                return BotError.MISSING_ROLE_MENTION
-            
-            admin_role_id = message.role_mentions[0].id
-            cached_guild.admin_role = admin_role_id
-            
-            self.__data_service.save_and_commit(cached_guild)
-            
-            return BotMessage.ADMIN_ROLE_SET.format(cached_guild.admin_role)
         
-        elif command == BotCommand.JAILTIME:
-            # only allow admins to set jail time, ignore message otherwise
+        elif command == BotCommand.JAILTIME or command == BotCommand.JAILBONKS:
+            # only allow admins, ignore message otherwise
             if not await self._is_admin(
                 self.__data_service.get_user(message.author.id, cached_guild.id)
             ):
@@ -285,48 +271,28 @@ class BonkBot(discord.Client):
                 return
             
             if not additional_args or len(additional_args) < 1:
-                return BotMessage.JAIL_TIME_INFO.format(cached_guild.horny_jail_seconds)
-            
-            if len(additional_args) != 1:
-                return BotError.MISSING_NUMBER
-            
-            jail_seconds = 0
-            try:
-                jail_seconds = int(additional_args)
-            except ValueError:
-                return BotError.MISSING_NUMBER
-            
-            cached_guild.horny_jail_seconds = jail_seconds
-            
-            self.__data_service.save_and_commit(cached_guild)
-            
-            return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_seconds)
-        
-        elif command == BotCommand.JAILBONKS:
-            # only allow admins to set jail bonks, ignore message otherwise
-            if not await self._is_admin(
-                self.__data_service.get_user(message.author.id, cached_guild.id)
-            ):
-                self.__logger.debug(
-                    f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
-                )
-                return
-            
-            if not additional_args or len(additional_args) < 1:
+                if command == BotCommand.JAILTIME:
+                    return BotMessage.JAIL_TIME_INFO.format(cached_guild.horny_jail_seconds)
                 return BotMessage.JAIL_BONKS_INFO.format(cached_guild.horny_jail_bonks)
             
             if len(additional_args) != 1:
                 return BotError.MISSING_NUMBER
             
-            jail_bonks = 0
+            number = 0
             try:
-                jail_bonks = int(additional_args)
+                number = int(additional_args)
             except ValueError:
                 return BotError.MISSING_NUMBER
             
-            cached_guild.horny_jail_bonks = jail_bonks
+            if command == BotCommand.JAILTIME:
+                cached_guild.horny_jail_seconds = number
+            else:
+                cached_guild.horny_jail_bonks = number
             
             self.__data_service.save_and_commit(cached_guild)
+            
+            if command == BotCommand.JAILTIME:
+                return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_seconds)
             
             return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_bonks)
         
@@ -428,3 +394,6 @@ class BonkBot(discord.Client):
         member = await discord_guild.fetch_member(user.discord_id)
         role = discord_guild.get_role(horny_jail_role)
         await member.add_roles(role)
+
+    def _check_privileges(self, message: discord.Message, cached_guild: Guild):
+        pass
