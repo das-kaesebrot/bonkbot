@@ -20,8 +20,8 @@ class Guild(Base):
     users: Mapped[List["User"]] = relationship()
     admin_role: Mapped[int] = mapped_column(nullable=True)
     horny_jail_role: Mapped[int] = mapped_column(nullable=True)
-    horny_jail_seconds: Mapped[int] = mapped_column(default=600)
-    horny_jail_bonks: Mapped[int] = mapped_column(default=10)
+    horny_jail_seconds: Mapped[int] = mapped_column(nullable=True)
+    horny_jail_bonks: Mapped[int] = mapped_column(nullable=True)
 
 
 class User(Base):
