@@ -22,6 +22,7 @@ class BotMessage():
     
     HELP = """**Available commands**
 
+**User commands**
 `{prefix}bonk` as a reply to a message - Bonk the author of the original message (`{prefix}` can be ommitted)
 `{prefix}bonk [name | tagged user]` - Bonk a user (`{prefix}` can be ommitted)
 `{prefix}bonks` - Get the top 5 most bonked users
