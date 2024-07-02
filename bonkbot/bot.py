@@ -377,8 +377,8 @@ class BonkBot(discord.Client):
         guild = self.get_guild(guild_id)
         if not guild:
             return True
-
-        member = guild.get_member(user.discord_id)
+        
+        member = await guild.fetch_member(user.discord_id)
         if not member:
             raise ValueError(
                 f"Couldn't find member with discord id '{user.discord_id}' in guild '{guild_id}'"
