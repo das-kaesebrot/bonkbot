@@ -182,7 +182,7 @@ class BonkBot(discord.Client):
             )
 
         elif command == BotCommand.PARDON:
-            # only allow admins to change prefix, ignore message otherwise
+            # only allow admins to pardon, ignore message otherwise
             if not await self._is_admin(
                 self.__data_service.get_user(message.author.id, cached_guild.id)
             ):
