@@ -28,14 +28,22 @@ class BonkBot(discord.Client):
         self.__data_service = data_service
         self.__config = config
 
-        # synchronize settings to database in beginning
+        # synchronize settings to database in the beginning
         for guild_id, guild_config in config.guild_config.items():
             guild = self.__data_service.get_guild(guild_id)
-
-            guild.admin_role = guild_config.admin_role
-            guild.horny_jail_role = guild_config.horny_jail_role
-            guild.horny_jail_seconds = guild_config.horny_jail_seconds
-            guild.horny_jail_bonks = guild_config.horny_jail_bonks
+            
+            # only override props if unset or to be forced
+            if guild_config.force_override or not guild.admin_role:
+                guild.admin_role = guild_config.admin_role
+            
+            if guild_config.force_override or not guild.horny_jail_role:
+                guild.horny_jail_role = guild_config.horny_jail_role
+            
+            if guild_config.force_override or not guild.horny_jail_seconds:
+                guild.horny_jail_seconds = guild_config.horny_jail_seconds
+            
+            if guild_config.force_override or not guild.horny_jail_bonks:
+                guild.horny_jail_bonks = guild_config.horny_jail_bonks
 
         self.jail_sync_job = JailSync(self)
         super().__init__(intents=intents, **options)
