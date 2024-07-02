@@ -403,7 +403,7 @@ class BonkBot(discord.Client):
         if not (discord_guild or horny_jail_role):
             return
 
-        member = discord_guild.get_member(user.discord_id)
+        member = await discord_guild.fetch_member(user.discord_id)
         role = discord_guild.get_role(horny_jail_role)
         await member.remove_roles(role)
 
