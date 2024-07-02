@@ -31,17 +31,17 @@ class BonkBot(discord.Client):
         # synchronize settings to database in the beginning
         for guild_id, guild_config in config.guild_config.items():
             guild = self.__data_service.get_guild(guild_id)
-            
+
             # only override props if unset or to be forced
             if guild_config.force_override or not guild.admin_role:
                 guild.admin_role = guild_config.admin_role
-            
+
             if guild_config.force_override or not guild.horny_jail_role:
                 guild.horny_jail_role = guild_config.horny_jail_role
-            
+
             if guild_config.force_override or not guild.horny_jail_seconds:
                 guild.horny_jail_seconds = guild_config.horny_jail_seconds
-            
+
             if guild_config.force_override or not guild.horny_jail_bonks:
                 guild.horny_jail_bonks = guild_config.horny_jail_bonks
 
@@ -204,7 +204,7 @@ class BonkBot(discord.Client):
             self.__data_service.save_and_commit(user)
             await self._free_user_from_jail(user)
             return BotMessage.PARDONED.format(matched_user.display_name)
-        
+
         elif command == BotCommand.JAIL:
             # only allow admins to immediately send to jail, ignore message otherwise
             if not await self._is_admin(
@@ -222,12 +222,12 @@ class BonkBot(discord.Client):
 
             user = self.__data_service.get_user(matched_user.id, cached_guild.id)
             await self._send_to_horny_jail(user)
-            
+
             return BotMessage.SENT_TO_JAIL.format(
                 name=matched_user.display_name,
                 timestamp=int(user.horny_jail_until.timestamp()),
             )
-            
+
         elif command == BotCommand.ADMINROLE or command == BotCommand.JAILROLE:
             # only allow admins to set roles, ignore message otherwise
             if not await self._is_admin(
@@ -237,29 +237,29 @@ class BonkBot(discord.Client):
                     f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
                 )
                 return
-            
+
             if not additional_args or len(additional_args) < 1:
                 if command == BotCommand.ADMINROLE:
                     return BotMessage.ADMIN_ROLE_INFO.format(cached_guild.admin_role)
                 return BotMessage.JAIL_ROLE_INFO.format(cached_guild.horny_jail_role)
-            
+
             if len(message.role_mentions) != 1:
                 return BotError.MISSING_ROLE_MENTION
-            
+
             role_id = message.role_mentions[0].id
-            
+
             if command == BotCommand.ADMINROLE:
                 cached_guild.admin_role = role_id
             else:
                 cached_guild.horny_jail_role = role_id
-            
+
             self.__data_service.save_and_commit(cached_guild)
-            
+
             if command == BotCommand.ADMINROLE:
                 return BotMessage.ADMIN_ROLE_SET.format(cached_guild.admin_role)
-                
+
             return BotMessage.JAIL_ROLE_SET.format(cached_guild.horny_jail_role)
-        
+
         elif command == BotCommand.JAILTIME or command == BotCommand.JAILBONKS:
             # only allow admins, ignore message otherwise
             if not await self._is_admin(
@@ -269,33 +269,35 @@ class BonkBot(discord.Client):
                     f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
                 )
                 return
-            
+
             if not additional_args or len(additional_args) < 1:
                 if command == BotCommand.JAILTIME:
-                    return BotMessage.JAIL_TIME_INFO.format(cached_guild.horny_jail_seconds)
+                    return BotMessage.JAIL_TIME_INFO.format(
+                        cached_guild.horny_jail_seconds
+                    )
                 return BotMessage.JAIL_BONKS_INFO.format(cached_guild.horny_jail_bonks)
-            
+
             if len(additional_args) != 1:
                 return BotError.MISSING_NUMBER
-            
+
             number = 0
             try:
                 number = int(additional_args)
             except ValueError:
                 return BotError.MISSING_NUMBER
-            
+
             if command == BotCommand.JAILTIME:
                 cached_guild.horny_jail_seconds = number
             else:
                 cached_guild.horny_jail_bonks = number
-            
+
             self.__data_service.save_and_commit(cached_guild)
-            
+
             if command == BotCommand.JAILTIME:
                 return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_seconds)
-            
+
             return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_bonks)
-        
+
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
 
@@ -343,7 +345,7 @@ class BonkBot(discord.Client):
         guild = await self.fetch_guild(guild_id)
         if not guild:
             return True
-        
+
         member = await guild.fetch_member(user.discord_id)
         if not member:
             raise ValueError(
@@ -355,12 +357,14 @@ class BonkBot(discord.Client):
     async def sync_horny_jails(self):
         self.__logger.info("Running jail synchronisation")
         free_users = self.__data_service.get_all_pending_jail_releases()
-        
+
         if len(free_users) < 1:
             return
 
         for user in free_users:
-            self.__logger.debug(f"Freeing user '{user.discord_id}' in guild '{user.guild}' from jail")
+            self.__logger.debug(
+                f"Freeing user '{user.discord_id}' in guild '{user.guild}' from jail"
+            )
             await self._free_user_from_jail(user)
 
         self.__data_service.set_users_free(free_users)
