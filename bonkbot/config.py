@@ -7,6 +7,7 @@ class GuildConfig(BaseSettings):
     horny_jail_role: int | None = None
     horny_jail_seconds: int = 600
     horny_jail_bonks: int = 10
+    force_override: bool = False
     
 class BotConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix='BONKBOT_', json_file="config.json")
