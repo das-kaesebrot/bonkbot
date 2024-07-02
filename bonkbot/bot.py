@@ -224,7 +224,7 @@ class BonkBot(discord.Client):
             await self._send_to_horny_jail(user)
             
             return BotMessage.SENT_TO_JAIL.format(
-                name=bonked_user.matched_user,
+                name=matched_user.display_name,
                 timestamp=int(user.horny_jail_until.timestamp()),
             )
             
