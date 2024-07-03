@@ -4,6 +4,11 @@ This is a meme bot for bonking users in discord.
 
 ![Horny jail meme](assets/bonk.png)
 
+## What it does
+The bot allows you to bonk users behaving horny in chat.
+If someone has been bonked more than 10 times, they get sent to horny jail (-> a role is assigned) for a specified time, by default 600 seconds.
+For ways to customize all these values, please see `!bonkhelp` or the usage section.
+
 ## Invite to your server
 Feel free to invite the bot  this [invite link](https://discord.com/oauth2/authorize?client_id=1254550959510519869).
 
@@ -19,7 +24,7 @@ Feel free to invite the bot  this [invite link](https://discord.com/oauth2/autho
 | `!bonks` | Get the top 5 most bonked users |
 | `!bonks [name \| tagged user]` | Get the bonks of a user |
 | `!bonkprefix` | Get the prefix for this bot's commands
-| `!bonkhelp` | Show this help message |
+| `!bonkhelp` | Show help message |
 
 ### Admin commands
 | Command | Description |
