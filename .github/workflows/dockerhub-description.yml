@@ -20,3 +20,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PAT }}
           repository: ${{ vars.DOCKERHUB_IMAGENAME }}
           short-description: ${{ github.event.repository.description }}
+          enable-url-completion: true
