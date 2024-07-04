@@ -162,3 +162,6 @@ class DataService:
         select_statement = select(func.count()).select_from(Bonk)
         return self.__session.execute(select_statement).scalar() or 0
     
+    def get_total_users_in_horny_jail_count(self):
+        select_statement = select(func.count()).select_from(User).where(User.horny_jail_until)
+        return self.__session.execute(select_statement).scalar() or 0
