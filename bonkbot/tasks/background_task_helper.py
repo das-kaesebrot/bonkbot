@@ -8,7 +8,11 @@ class BackgroundTaskHelper(commands.Cog):
 
     def cog_unload(self):
         self.jail_sync_job.cancel()
-
+    
+    async def start_all(self):
+        self.jail_sync_job.start()
+        self.bot_presence_job.start()
+    
     @tasks.loop(minutes=1)
     async def jail_sync_job(self):
         await self.bot.sync_horny_jails()

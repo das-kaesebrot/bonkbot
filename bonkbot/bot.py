@@ -50,7 +50,7 @@ class BonkBot(discord.Client):
 
     async def on_ready(self):
         self.__logger.info(f"Logged on as '{self.user}'")
-        self.bg_task_helper.jail_sync_job.start()
+        await self.bg_task_helper.start_all()
 
     async def on_message(self, message: discord.Message):
         guild_prefix = self.__data_service.get_guild_prefix(message.guild.id)
