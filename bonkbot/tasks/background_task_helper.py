@@ -12,3 +12,8 @@ class BackgroundTaskHelper(commands.Cog):
     @tasks.loop(minutes=1)
     async def jail_sync_job(self):
         await self.bot.sync_horny_jails()
+        
+    @tasks.loop(minutes=1)
+    async def bot_presence_job(self):
+        await self.bot.update_presence()
+    
