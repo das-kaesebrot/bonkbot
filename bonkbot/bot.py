@@ -373,7 +373,9 @@ class BonkBot(discord.Client):
     async def update_presence(self):
         self.__logger.info("Updating presence")
         activity = discord.Activity()
-        activity.state = f"{self.__data_service.get_total_bonk_count()} bonks given out"
+        activity.name = "Bonking users"
+        activity.state = f"{self.__data_service.get_total_bonk_count():,} bonks given out"
+        activity.type = discord.ActivityType.custom
         await self.change_presence(activity=activity, status=discord.Status.online)
 
     async def _free_user_from_jail(self, user: User):
