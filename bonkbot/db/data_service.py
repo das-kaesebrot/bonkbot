@@ -157,4 +157,8 @@ class DataService:
         self.__session.add_all(changed_users)
         self.__session.commit()
         self.__session.flush()
-        
+    
+    def get_total_bonk_count(self):
+        select_statement = select(func.count()).select_from(Bonk)
+        return self.__session.execute(select_statement).scalar() or 0
+    
