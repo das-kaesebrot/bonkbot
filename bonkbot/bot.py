@@ -1,5 +1,6 @@
 import logging
 import discord
+from random import randrange
 
 from .db.data_service import DataService
 from .enums.bot_command import BotCommand
@@ -374,7 +375,12 @@ class BonkBot(discord.Client):
         self.__logger.info("Updating presence")
         activity = discord.Activity()
         activity.name = "Bonking users"
-        activity.state = f"{self.__data_service.get_total_bonk_count():,} bonks given out"
+        
+        if randrange(0, 100) != 0:
+            activity.state = f"{self.__data_service.get_total_bonk_count():,} bonks given out - {self.__data_service.get_total_users_in_horny_jail_count():,} user(s) in horny jail"
+        else:
+            activity.state = "Picking Donut's new fridge"
+        
         activity.type = discord.ActivityType.custom
         await self.change_presence(activity=activity, status=discord.Status.online)
 
