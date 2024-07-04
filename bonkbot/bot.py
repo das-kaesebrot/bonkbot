@@ -7,14 +7,14 @@ from .models.models import Guild, User
 from .config import BotConfig
 from .constants.bot_message import BotMessage
 from .constants.bot_error import BotError
-from .tasks.jail_sync import JailSync
+from .tasks.background_task_helper import BackgroundTaskHelper
 
 
 class BonkBot(discord.Client):
     __data_service: DataService
     __config: BotConfig
     __logger: logging.Logger
-    jail_sync_job: JailSync
+    bg_task_helper: BackgroundTaskHelper
 
     def __init__(
         self,
@@ -45,12 +45,12 @@ class BonkBot(discord.Client):
             if guild_config.force_override or not guild.horny_jail_bonks:
                 guild.horny_jail_bonks = guild_config.horny_jail_bonks
 
-        self.jail_sync_job = JailSync(self)
+        self.bg_task_helper = BackgroundTaskHelper(self)
         super().__init__(intents=intents, **options)
 
     async def on_ready(self):
         self.__logger.info(f"Logged on as '{self.user}'")
-        self.jail_sync_job.sync_job.start()
+        self.bg_task_helper.jail_sync_job.start()
 
     async def on_message(self, message: discord.Message):
         guild_prefix = self.__data_service.get_guild_prefix(message.guild.id)

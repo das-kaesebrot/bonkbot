@@ -1,14 +1,14 @@
 import logging
 from discord.ext import tasks, commands
 
-class JailSync(commands.Cog):
+class BackgroundTaskHelper(commands.Cog):
     def __init__(self, bot):
-        logging.getLogger(__name__).info("Created sync job")
+        logging.getLogger(__name__).info("Created background task helper")
         self.bot = bot
 
     def cog_unload(self):
-        self.sync_job.cancel()
+        self.jail_sync_job.cancel()
 
     @tasks.loop(minutes=1)
-    async def sync_job(self):
+    async def jail_sync_job(self):
         await self.bot.sync_horny_jails()
