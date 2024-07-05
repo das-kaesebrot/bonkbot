@@ -16,7 +16,7 @@ class BonkBot(discord.Client):
     __config: BotConfig
     __logger: logging.Logger
     bg_task_helper: BackgroundTaskHelper
-    __cached_activity: discord.Activity
+    __cached_activity: discord.Activity = None
 
     def __init__(
         self,
