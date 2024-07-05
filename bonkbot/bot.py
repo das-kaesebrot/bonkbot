@@ -16,6 +16,7 @@ class BonkBot(discord.Client):
     __config: BotConfig
     __logger: logging.Logger
     bg_task_helper: BackgroundTaskHelper
+    __cached_activity: discord.Activity
 
     def __init__(
         self,
@@ -377,11 +378,19 @@ class BonkBot(discord.Client):
         activity.name = "Bonking users"
         
         if randrange(0, 100) != 0:
-            activity.state = f"{self.__data_service.get_total_bonk_count():,} bonks given out - {self.__data_service.get_total_users_in_horny_jail_count():,} user(s) in horny jail"
+            activity.state = f"{bonk_count:,} total bonk{'' if bonk_count == 1 else 's'} - {horny_jail_count:,} user{'' if horny_jail_count == 1 else 's'} in horny jail"
+            bonk_count = self.__data_service.get_total_bonk_count()
+            horny_jail_count = self.__data_service.get_total_users_in_horny_jail_count()
         else:
             activity.state = "Picking Donut's new fridge"
-        
         activity.type = discord.ActivityType.custom
+        
+        # early bailout if nothing changed
+        if self.__cached_activity and activity == self.__cached_activity:
+            return
+        
+        self.__logger.info("Activity changed, updating presence via API")
+        self.__cached_activity = activity
         await self.change_presence(activity=activity, status=discord.Status.online)
 
     async def _free_user_from_jail(self, user: User):
