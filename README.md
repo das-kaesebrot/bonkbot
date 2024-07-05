@@ -66,7 +66,8 @@ The file has to be called `config.json` and has to be mounted next to the script
             "admin_role": 13774555512916872331,
             "horny_jail_role": 1377464510916872449,
             "horny_jail_bonks": 10,
-            "horny_jail_seconds": 600
+            "horny_jail_seconds": 600,
+            "force_override": true
         }
     }
 }
