@@ -71,3 +71,27 @@ The file has to be called `config.json` and has to be mounted next to the script
     }
 }
 ```
+
+## Open Source License Attribution
+
+This application uses Open Source components. You can find the source code of their open source projects along with license information below. We acknowledge and are grateful to these developers for their contributions to open source.
+### [discord.py](https://github.com/Rapptz/discord.py)
+- Copyright (c) 2015-present [Rapptz](https://github.com/Rapptz)
+- [MIT License](https://github.com/Rapptz/discord.py/blob/master/LICENSE)
+
+### [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy)
+- Copyright (c) 2005-present [SQLAlchemy authors and contributors](https://github.com/sqlalchemy/sqlalchemy/blob/main/AUTHORS)
+- [MIT License](https://github.com/sqlalchemy/sqlalchemy/blob/main/LICENSE)
+
+### [pydantic-settings](https://github.com/pydantic/pydantic-settings)
+- Copyright (c) 2022-present [Samuel Colvin](https://github.com/samuelcolvin) and [other contributors](https://github.com/pydantic/pydantic-settings/graphs/contributors)
+- [MIT License](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE)
+
+### [Flake8](https://github.com/PyCQA/flake8)
+- Copyright (c) 2011-2013 Tarek Ziade <tarek@ziade.org>
+- Copyright (c) 2012-2016 Ian Cordasco <graffatcolmingov@gmail.com>
+- [Flake8 license (MIT)](https://github.com/PyCQA/flake8/blob/main/LICENSE)
+
+### [pytest](https://github.com/pytest-dev/pytest)
+- Copyright (c) 2004-present [Holger Krekel](https://github.com/hpk42) and [other contributers](https://github.com/pytest-dev/pytest/blob/main/AUTHORS)
+- [MIT License](https://github.com/pytest-dev/pytest/blob/main/LICENSE)
