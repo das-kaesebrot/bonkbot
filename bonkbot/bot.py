@@ -64,7 +64,8 @@ class BonkBot(discord.Client):
         # but allow messages containing just the word bonk
         if (
             not message_content.startswith(guild_prefix)
-            and message_content != BotCommand.BONK
+            and not message_content == BotCommand.BONK
+            and not message_content.startswith(f"{BotCommand.BONK} ")
         ):
             return
 
