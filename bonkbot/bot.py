@@ -378,9 +378,9 @@ class BonkBot(discord.Client):
         activity.name = "Bonking users"
         
         if randrange(0, 100) != 0:
-            activity.state = f"{bonk_count:,} total bonk{'' if bonk_count == 1 else 's'} - {horny_jail_count:,} user{'' if horny_jail_count == 1 else 's'} in horny jail"
             bonk_count = self.__data_service.get_total_bonk_count()
             horny_jail_count = self.__data_service.get_total_users_in_horny_jail_count()
+            activity.state = f"{bonk_count:,} total bonk{'' if bonk_count == 1 else 's'} - {horny_jail_count:,} user{'' if horny_jail_count == 1 else 's'} in horny jail"
         else:
             activity.state = "Picking Donut's new fridge"
         activity.type = discord.ActivityType.custom
