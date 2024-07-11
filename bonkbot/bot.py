@@ -107,6 +107,8 @@ class BonkBot(discord.Client):
         additional_args: str | None,
         cached_guild: Guild,
     ) -> str | None:
+        self.__logger.debug(f"Got command: {command=}, {additional_args=}")
+        
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
 
