@@ -17,6 +17,8 @@ on:
       - "**.py"
       - .github/workflows/build-and-publish.yml
       - Dockerfile
+      - Pipfile
+      - Pipfile.lock
 
 jobs:
   build-and-push-image:
