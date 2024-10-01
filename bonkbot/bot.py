@@ -108,7 +108,7 @@ class BonkBot(discord.Client):
         cached_guild: Guild,
     ) -> str | None:
         self.__logger.debug(f"Got command: {command=}, {additional_args=}")
-        
+
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
 
@@ -375,12 +375,12 @@ class BonkBot(discord.Client):
 
         self.__data_service.set_users_free(free_users)
         self.__logger.info(f"Freed {len(free_users)} from jail")
-        
+
     async def update_presence(self):
         self.__logger.info("Updating presence")
         activity = discord.Activity()
         activity.name = "Bonking users"
-        
+
         if randrange(0, 100) != 0:
             bonk_count = self.__data_service.get_total_bonk_count()
             horny_jail_count = self.__data_service.get_total_users_in_horny_jail_count()
@@ -388,11 +388,11 @@ class BonkBot(discord.Client):
         else:
             activity.state = "Picking Donut's new fridge"
         activity.type = discord.ActivityType.custom
-        
+
         # early bailout if nothing changed
         if self.__cached_activity and activity == self.__cached_activity:
             return
-        
+
         self.__logger.info("Activity changed, updating presence via API")
         self.__cached_activity = activity
         await self.change_presence(activity=activity, status=discord.Status.online)
