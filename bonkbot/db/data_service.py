@@ -21,6 +21,9 @@ class DataService:
         self.__engine = create_engine(connection_string, echo=echo)
         Base.metadata.create_all(self.__engine)
         self.__session = Session(self.__engine)
+        
+        assert self.__engine is not None
+        assert self.__session is not None
 
     def __del__(self):
         self._logger.info("Shutting down")
