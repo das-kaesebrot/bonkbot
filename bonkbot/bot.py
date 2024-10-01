@@ -391,11 +391,11 @@ class BonkBot(discord.Client):
         activity.type = discord.ActivityType.custom
 
         # early bailout if nothing changed
-        if self.__cached_activity and activity == self.__cached_activity:
+        if self.__cached_activity and activity.state == self.__cached_activity:
             return
 
         self.__logger.info("Activity changed, updating presence via API")
-        self.__cached_activity = activity
+        self.__cached_activity = activity.state
         await self.change_presence(activity=activity, status=discord.Status.online)
 
     async def _free_user_from_jail(self, user: User):
