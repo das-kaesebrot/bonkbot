@@ -10,7 +10,7 @@ If someone has been bonked more than 10 times, they get sent to horny jail (-> a
 For ways to customize all these values, please see `!bonkhelp` or the usage section.
 
 ## Invite to your server
-Feel free to invite the bot  this [invite link](https://discord.com/oauth2/authorize?client_id=1254550959510519869).
+Feel free to invite the bot using this [invite link](https://discord.com/oauth2/authorize?client_id=1254550959510519869).
 
 **In the beginning, everyone is allowed to send admin commands. Be sure to set the admin role with the command `!bonkadmin [role mention]` as soon as possible!**
 
