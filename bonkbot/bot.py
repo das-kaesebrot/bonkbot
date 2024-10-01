@@ -333,11 +333,12 @@ class BonkBot(discord.Client):
             return
 
         # try matching a user by querying members
-        matched_users = await message.guild.query_members(additional_args.lower())
+        matched_user = discord.utils.find(
+            lambda m: m.name.find(additional_args.lower()) != -1,
+            message.channel.guild.members,
+        )
 
-        # if there was a match, return the first result
-        if len(matched_users) > 0:
-            return matched_users[0]
+        return matched_user
 
     async def _is_admin(self, user: User):
         guild_id = user.guild
