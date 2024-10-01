@@ -1,4 +1,4 @@
-FROM python:alpine as build
+FROM python:alpine AS build
 
 COPY Pipfile .
 COPY Pipfile.lock .
@@ -7,7 +7,7 @@ COPY Pipfile.lock .
 RUN python3 -m pip install pipenv && \
     pipenv requirements > requirements.txt
 
-FROM python:alpine as base
+FROM python:alpine AS base
 ENV PYTHONUNBUFFERED=true
 
 ARG SCRIPT_ROOT=/usr/local/bin/bonkbot
