@@ -334,7 +334,8 @@ class BonkBot(discord.Client):
 
         # try matching a user by querying members
         matched_user = discord.utils.find(
-            lambda m: m.name.find(additional_args.lower()) != -1,
+            lambda m: (m.name.find(additional_args.lower()) != -1)
+            or (m.nick.find(additional_args.lower()) != -1),
             message.channel.guild.members,
         )
 
