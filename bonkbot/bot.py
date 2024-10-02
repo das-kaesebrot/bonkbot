@@ -62,7 +62,7 @@ class BonkBot(discord.Client):
             guilds = []
             for guild_id in guild_ids:
                 guild = await self._get_guild_from_id(guild_id)
-                guilds.append((guild_id, guild.name))
+                guilds.append((guild_id, "no guild name" if not guild.name else guild.name))
                 
             self.__logger.debug(f"Registered guilds: {guilds}")
         
