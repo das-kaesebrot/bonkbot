@@ -52,6 +52,20 @@ class BonkBot(discord.Client):
 
     async def on_ready(self):
         self.__logger.info(f"Logged on as '{self.user}'")
+        
+        # further debug info
+        self.__logger.info(f"Serving {self.__data_service.get_total_guild_count()} guilds")
+        
+        if self.__logger.level <= logging.DEBUG:
+            guild_ids = self.__data_service.get_all_guild_ids()
+            
+            guilds = []
+            for guild_id in guild_ids:
+                guild = await self._get_guild_from_id(guild_id)
+                guilds.append((guild_id, guild.name))
+                
+            self.__logger.debug(f"Registered guilds: {guilds}")
+        
         await self.bg_task_helper.start_all()
 
     async def on_message(self, message: discord.Message):
