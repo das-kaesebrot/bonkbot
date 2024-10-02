@@ -343,7 +343,10 @@ class BonkBot(discord.Client):
         )
 
         return matched_user
-
+    
+    async def _get_guild_from_id(self, guild_id: int) -> discord.Guild | None:
+        return self.get_guild(guild_id)
+    
     async def _is_admin(self, user: User):
         guild_id = user.guild
         admin_role = self.__data_service.get_guild(guild_id).admin_role
