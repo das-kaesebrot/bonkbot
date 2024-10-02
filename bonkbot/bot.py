@@ -52,20 +52,22 @@ class BonkBot(discord.Client):
 
     async def on_ready(self):
         self.__logger.info(f"Logged on as '{self.user}'")
-        
+
         # further debug info
-        self.__logger.info(f"Serving {self.__data_service.get_total_guild_count()} guilds")
-        
+        self.__logger.info(
+            f"Serving {self.__data_service.get_total_guild_count()} guilds"
+        )
+
         if self.__logger.level <= logging.DEBUG:
-            guild_ids = self.__data_service.get_all_guild_ids()
-            
             guilds = []
-            for guild_id in guild_ids:
-                guild = await self._get_guild_from_id(guild_id)
-                guilds.append((guild_id, "no guild name" if not guild.name else guild.name))
-                
+
+            async for guild in self.fetch_guilds():
+                guilds.append(
+                    (guild.id, "no guild name" if not guild.name else guild.name)
+                )
+
             self.__logger.debug(f"Registered guilds: {guilds}")
-        
+
         await self.bg_task_helper.start_all()
 
     async def on_message(self, message: discord.Message):
@@ -345,10 +347,10 @@ class BonkBot(discord.Client):
         # --> return None if there is no additional info
         if not additional_args or len(additional_args) < 1:
             return
-        
+
         if additional_args.lower() == "self":
             return message.author
-        
+
         # try matching a user by querying members
         matched_user = discord.utils.find(
             lambda m: (m.name.find(additional_args.lower()) != -1)
@@ -357,10 +359,7 @@ class BonkBot(discord.Client):
         )
 
         return matched_user
-    
-    async def _get_guild_from_id(self, guild_id: int) -> discord.Guild | None:
-        return self.get_guild(guild_id)
-    
+
     async def _is_admin(self, user: User):
         guild_id = user.guild
         admin_role = self.__data_service.get_guild(guild_id).admin_role
