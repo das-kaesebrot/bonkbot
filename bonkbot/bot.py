@@ -331,7 +331,10 @@ class BonkBot(discord.Client):
         # --> return None if there is no additional info
         if not additional_args or len(additional_args) < 1:
             return
-
+        
+        if additional_args.lower() == "self":
+            return message.author
+        
         # try matching a user by querying members
         matched_user = discord.utils.find(
             lambda m: (m.name.find(additional_args.lower()) != -1)
