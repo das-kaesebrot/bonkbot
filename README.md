@@ -54,6 +54,7 @@ Environment variables take precedence over the config file.
 | `BONKBOT_TOKEN` | Bot token to use for login at the discord API | `None` | Yes |
 | `BONKBOT_LOG_LEVEL` | Logging level | `info` | No |
 | `BONKBOT_DB_CONNECTION_STRING` | The connection string for the database engine to use | `sqlite://` | No |
+| `BONKBOT_CLEAN_UP_STALE_GUILDS` | Whether to delete cached guilds (servers) from the database that the bot is no longer part of | `false` | No |
 
 ### Config file
 The file has to be called `config.json` and has to be mounted next to the script at `/usr/local/bin/bonkbot/config.json`.
@@ -61,6 +62,7 @@ The file has to be called `config.json` and has to be mounted next to the script
 {
     "log_level": "info",
     "db_connection_string": "sqlite:///data.db",
+    "clean_up_stale_guilds": false,
     "guild_config": {
         "YOUR_GUILD_ID": {
             "admin_role": 13774555512916872331,
