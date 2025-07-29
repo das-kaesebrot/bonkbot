@@ -446,7 +446,7 @@ class BonkBot(discord.Client):
         self.__logger.debug(f"Guilds that client is part of: {guilds_discord}")
         self.__logger.debug(f"Guilds that are cached in database: {guilds_cached}")
         self.__logger.info(f"Removing stale guilds from database: {stale_guild_ids}")
-        self.__data_service.delete_guilds(stale_guild_ids)
+        self.__data_service.delete_guilds(list(stale_guild_ids))
 
     async def _free_user_from_jail(self, user: User):
         discord_guild = await self.fetch_guild(user.guild)
