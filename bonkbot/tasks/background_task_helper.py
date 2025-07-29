@@ -1,8 +1,10 @@
 import logging
 from discord.ext import tasks, commands
 
+from bonkbot.bot import BonkBot
+
 class BackgroundTaskHelper(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: BonkBot):
         logging.getLogger(__name__).info("Created background task helper")
         self.bot = bot
 
@@ -19,5 +21,9 @@ class BackgroundTaskHelper(commands.Cog):
         
     @tasks.loop(minutes=1)
     async def bot_presence_job(self):
-        await self.bot.update_presence()
+        await self.bot.update_presence()    
     
+    @tasks.loop(days=1)
+    async def guild_cleanup_job(self):
+        await self.bot.clean_up_unused_guilds()
+        

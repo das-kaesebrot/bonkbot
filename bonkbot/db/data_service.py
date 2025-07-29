@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 import discord
-from sqlalchemy import URL, and_, create_engine, Engine, desc, func, select
+from sqlalchemy import URL, and_, create_engine, Engine, delete, desc, func, select
 from sqlalchemy.orm import Session, aliased
 
 from ..models.models import Base, Bonk, User, Guild
@@ -176,3 +176,10 @@ class DataService:
     def get_all_guild_ids(self) -> list[int]:
         select_statement = select(Guild.id)
         return self.__session.scalars(select_statement).all()
+    
+    def delete_guilds(self, guild_ids: list):
+        delete_statement = delete(Guild).where(Guild.id.in_(guild_ids))
+        self.__session.execute(delete_statement)
+        self.__session.commit()
+        self.__session.flush()
+        

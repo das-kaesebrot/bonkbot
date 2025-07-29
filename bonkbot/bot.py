@@ -416,6 +416,35 @@ class BonkBot(discord.Client):
         self.__logger.info("Activity changed, updating presence via API")
         self.__cached_activity = activity.state
         await self.change_presence(activity=activity, status=discord.Status.online)
+        
+    async def clean_up_unused_guilds(self):
+        self.__logger.info("Cleaning up unused guilds")
+                
+        self.__logger.info(f"Guilds in database: {self.__data_service.get_total_guild_count()}")
+        guilds_cached = set(self.__data_service.get_all_guild_ids())
+        
+        guilds_discord = []
+        
+        total_guilds_amount = len(self.guilds)
+        
+        last_fetched_guild_id = None
+        
+        while True:
+            fetch_limit = 200
+            fetched_guild_ids = [guild.id async for guild in self.fetch_guilds(after=last_fetched_guild_id, limit=fetch_limit, with_counts=False)]
+            
+            total_guilds_amount =- len(fetched_guild_ids)
+            guilds_discord.extend(fetched_guild_ids)
+            
+            if total_guilds_amount <= 0:
+                break
+            
+            last_fetched_guild_id = fetched_guild_ids[-1]
+        
+        stale_guild_ids = guilds_cached.difference(guilds_discord)
+        
+        self.__logger.info(f"Removing stale guilds from database: {stale_guild_ids}")
+        self.__data_service.delete_guilds(stale_guild_ids)
 
     async def _free_user_from_jail(self, user: User):
         discord_guild = await self.fetch_guild(user.guild)
