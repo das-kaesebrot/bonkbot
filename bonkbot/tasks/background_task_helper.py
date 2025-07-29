@@ -1,10 +1,8 @@
 import logging
 from discord.ext import tasks, commands
 
-from bonkbot.bot import BonkBot
-
 class BackgroundTaskHelper(commands.Cog):
-    def __init__(self, bot: BonkBot):
+    def __init__(self, bot):
         logging.getLogger(__name__).info("Created background task helper")
         self.bot = bot
 
