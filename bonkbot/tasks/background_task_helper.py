@@ -22,7 +22,7 @@ class BackgroundTaskHelper(commands.Cog):
     async def bot_presence_job(self):
         await self.bot.update_presence()    
     
-    @tasks.loop(days=1)
+    @tasks.loop(hours=24)
     async def guild_cleanup_job(self):
         await self.bot.clean_up_unused_guilds()
         
