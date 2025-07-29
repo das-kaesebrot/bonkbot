@@ -427,7 +427,11 @@ class BonkBot(discord.Client):
 
         member = await discord_guild.fetch_member(user.discord_id)
         role = discord_guild.get_role(horny_jail_role)
-        await member.remove_roles(role)
+        try:
+            await member.remove_roles(role)
+        except discord.errors.Forbidden:
+            self.__logger.exception(f"Couldn't remove user {member.id} from role {role.id}!")
+            
 
     async def _send_to_horny_jail(self, user: User):
         guild = self.__data_service.get_guild(user.guild)
@@ -447,7 +451,10 @@ class BonkBot(discord.Client):
 
         member = await discord_guild.fetch_member(user.discord_id)
         role = discord_guild.get_role(horny_jail_role)
-        await member.add_roles(role)
+        try:
+            await member.add_roles(role)
+        except discord.errors.Forbidden:
+            self.__logger.exception(f"Couldn't add user {member.id} to role {role.id}!")
 
     def _check_privileges(self, message: discord.Message, cached_guild: Guild):
         pass
