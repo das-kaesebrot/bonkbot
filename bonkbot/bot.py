@@ -425,7 +425,7 @@ class BonkBot(discord.Client):
         
         guilds_discord = []
         
-        total_guilds_amount = len(self.guilds)
+        remaining_guild_ids_to_fetch = len(self.guilds)
         
         last_fetched_guild_id = None
         
@@ -433,10 +433,10 @@ class BonkBot(discord.Client):
             fetch_limit = 200
             fetched_guild_ids = [guild.id async for guild in self.fetch_guilds(after=last_fetched_guild_id, limit=fetch_limit, with_counts=False)]
             
-            total_guilds_amount =- len(fetched_guild_ids)
+            remaining_guild_ids_to_fetch = remaining_guild_ids_to_fetch - len(fetched_guild_ids)
             guilds_discord.extend(fetched_guild_ids)
             
-            if total_guilds_amount <= 0:
+            if remaining_guild_ids_to_fetch <= 0:
                 break
             
             last_fetched_guild_id = fetched_guild_ids[-1]
