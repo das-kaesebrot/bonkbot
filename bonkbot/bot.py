@@ -445,6 +445,7 @@ class BonkBot(discord.Client):
         
         self.__logger.debug(f"Guilds that client is part of: {guilds_discord}")
         self.__logger.debug(f"Guilds that are cached in database: {list(guilds_cached)}")
+        self.__logger.debug(f"Difference: {stale_guild_ids}")
         self.__logger.info(f"Removing stale guilds from database: {stale_guild_ids}")
         self.__data_service.delete_guilds(stale_guild_ids)
 
