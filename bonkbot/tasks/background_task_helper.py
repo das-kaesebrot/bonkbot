@@ -12,6 +12,7 @@ class BackgroundTaskHelper(commands.Cog):
     async def start_all(self):
         self.jail_sync_job.start()
         self.bot_presence_job.start()
+        self.guild_cleanup_job.start()
     
     @tasks.loop(minutes=1)
     async def jail_sync_job(self):
