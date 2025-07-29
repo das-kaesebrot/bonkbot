@@ -66,7 +66,7 @@ class BonkBot(discord.Client):
                     (guild.id, "no guild name" if not guild.name else guild.name)
                 )
 
-            self.__logger.debug(f"Registered guilds: {guilds}")
+            self.__logger.info(f"Registered guilds: {guilds}")
 
         await self.bg_task_helper.start_all()
 
