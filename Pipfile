@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"discord.py" = "~=2.3.2"
+"discord.py" = "~=2.6.3"
 SQLAlchemy = "~=2.0.41"
 pydantic-settings = "~=2.3.4"
 
