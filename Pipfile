@@ -10,4 +10,4 @@ pydantic-settings = "~=2.10.1"
 
 [dev-packages]
 flake8 = "~=7.3.0"
-pytest = "~=8.2.2"
+pytest = "~=8.4.2"
