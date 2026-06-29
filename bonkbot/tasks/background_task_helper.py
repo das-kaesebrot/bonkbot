@@ -10,9 +10,8 @@ class BackgroundTaskHelper(commands.Cog):
         self.jail_sync_job.cancel()
     
     async def start_all(self):
-        self.jail_sync_job.start()
-        self.bot_presence_job.start()
-        self.guild_cleanup_job.start()
+        for job in [self.jail_sync_job, self.bot_presence_job, self.guild_cleanup_job]:
+            if not job.is_running(): job.start()
     
     @tasks.loop(minutes=1)
     async def jail_sync_job(self):
