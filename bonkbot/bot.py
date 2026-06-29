@@ -194,7 +194,7 @@ class BonkBot(discord.Client):
             user.bonk()
             self.__data_service.save_and_commit(user)
 
-            if not user.bonk_amount() % cached_guild.horny_jail_bonks == 0:
+            if (not user.bonk_amount() % cached_guild.horny_jail_bonks == 0) or (not cached_guild.horny_jail_role):
                 return BotMessage.BONK.format(
                     name=bonked_user.display_name, amount=user.bonk_amount()
                 )
