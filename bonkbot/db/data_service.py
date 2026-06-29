@@ -117,7 +117,7 @@ class DataService:
         select_statement = (
             select(User)
             .join(bonk_count_subquery, User.id == bonk_count_subquery.c.user)
-            .where(User.guild == guild_id)
+            .where(User.guild_id == guild_id)
             .order_by(desc(bonk_count_subquery.c.bonk_count))
             .limit(limit)
         )

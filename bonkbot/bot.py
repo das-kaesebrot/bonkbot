@@ -369,7 +369,7 @@ class BonkBot(discord.Client):
         return matched_user
 
     async def _is_admin(self, user: User):
-        guild_id = user.guild
+        guild_id = user.guild_id
         admin_role = self.__data_service.get_guild(guild_id).admin_role
 
         # allow everyone to manage when there is no admin role set
@@ -397,7 +397,7 @@ class BonkBot(discord.Client):
 
         for user in free_users:
             self.__logger.debug(
-                f"Freeing user '{user.discord_id}' in guild '{user.guild}' from jail"
+                f"Freeing user '{user.discord_id}' in guild '{user.guild_id}' from jail"
             )
             await self._free_user_from_jail(user)
 
@@ -467,8 +467,8 @@ class BonkBot(discord.Client):
         self.__data_service.delete_guilds(stale_guild_ids)
 
     async def _free_user_from_jail(self, user: User):
-        discord_guild = await self.fetch_guild(user.guild)
-        guild = self.__data_service.get_guild(user.guild)
+        discord_guild = await self.fetch_guild(user.guild_id)
+        guild = self.__data_service.get_guild(user.guild_id)
         horny_jail_role = guild.horny_jail_role
 
         if not (discord_guild or horny_jail_role):
@@ -483,7 +483,7 @@ class BonkBot(discord.Client):
             
 
     async def _send_to_horny_jail(self, user: User):
-        guild = self.__data_service.get_guild(user.guild)
+        guild = self.__data_service.get_guild(user.guild_id)
 
         # don't actually do anything if there is no horny jail role set yet
         if not guild.horny_jail_role:
