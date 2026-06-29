@@ -240,6 +240,9 @@ class BonkBot(discord.Client):
                     f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
                 )
                 return
+            
+            if not cached_guild.horny_jail_role:
+                return BotError.NO_JAIL_SET
 
             matched_user = await self._get_user_from_message(message, additional_args)
 

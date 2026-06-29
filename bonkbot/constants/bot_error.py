@@ -4,4 +4,4 @@ class BotError():
     MISSING_USER = "⚠️ User needs to be specified!"
     MISSING_ROLE_MENTION = "⚠️ Exactly one role has to be mentioned!"
     BAD_NUMBER = "⚠️ Exactly one positive number has to be specified!"
-    
+    NO_JAIL_SET = "⚠️ Couldn't send user to horny jail because no role has been set!"
