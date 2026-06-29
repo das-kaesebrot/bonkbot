@@ -319,7 +319,7 @@ class BonkBot(discord.Client):
             if command == BotCommand.JAILTIME:
                 return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_seconds)
 
-            return BotMessage.JAIL_TIME_SET.format(cached_guild.horny_jail_bonks)
+            return BotMessage.JAIL_BONKS_SET.format(cached_guild.horny_jail_bonks)
 
         elif command == BotCommand.HELP:
             return BotMessage.HELP.format(prefix=cached_guild.prefix)
