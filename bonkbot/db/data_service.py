@@ -28,6 +28,7 @@ class DataService:
     def __del__(self):
         self._logger.info("Shutting down")
         self.__session.close()
+        self.__engine.dispose()
 
     def get_user(self, discord_id: int, guild_id: int) -> User:
         """Gets a user by the specified user_id. Always returns a value, either an existing user or a new one generated on the fly.
