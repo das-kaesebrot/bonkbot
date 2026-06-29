@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
+from bonkbot.enums import default_values
 
 class Base(DeclarativeBase):
     pass
@@ -20,8 +20,8 @@ class Guild(Base):
     users: Mapped[List["User"]] = relationship()
     admin_role: Mapped[int] = mapped_column(nullable=True)
     horny_jail_role: Mapped[int] = mapped_column(nullable=True)
-    horny_jail_seconds: Mapped[int] = mapped_column(nullable=True)
-    horny_jail_bonks: Mapped[int] = mapped_column(nullable=True)
+    horny_jail_seconds: Mapped[int] = mapped_column(nullable=True, default=default_values.HORNY_JAIL_SECONDS)
+    horny_jail_bonks: Mapped[int] = mapped_column(nullable=True, default=default_values.HORNY_JAIL_BONKS)
 
 
 class User(Base):
