@@ -8,6 +8,8 @@ class BackgroundTaskHelper(commands.Cog):
 
     def cog_unload(self):
         self.jail_sync_job.cancel()
+        self.bot_presence_job.cancel()
+        self.guild_cleanup_job.cancel()
     
     async def start_all(self):
         for job in [self.jail_sync_job, self.bot_presence_job, self.guild_cleanup_job]:
