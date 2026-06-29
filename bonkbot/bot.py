@@ -71,6 +71,9 @@ class BonkBot(discord.Client):
         await self.bg_task_helper.start_all()
 
     async def on_message(self, message: discord.Message):
+        if not message.guild: # is a DM, ignore
+            return
+
         guild_prefix = self.__data_service.get_guild_prefix(message.guild.id)
 
         # get message with all whitespace around it removed
