@@ -151,7 +151,7 @@ class BonkBot(discord.Client):
             if additional_args.lower() == "reset":
                 additional_args = "!"
 
-            if len(additional_args) != 1 or additional_args == " ":
+            if len(additional_args) != 1:
                 return BotError.INVALID_PREFIX.format(additional_args)
 
             cached_guild.prefix = additional_args
