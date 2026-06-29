@@ -31,7 +31,7 @@ class User(Base):
     id: Mapped[str] = mapped_column(primary_key=True)
     discord_id: Mapped[int] = mapped_column()
     bonks: Mapped[List["Bonk"]] = relationship()
-    guild_id: Mapped[int] = mapped_column(ForeignKey("guilds.id"))
+    guild_id: Mapped[int] = mapped_column("guild", ForeignKey("guilds.id"))
     horny_jail_until: Mapped[datetime] = mapped_column(nullable=True)
 
     def bonk(self):
