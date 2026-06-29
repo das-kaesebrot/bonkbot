@@ -462,7 +462,7 @@ class TestJailAmountInputs:
         result = _run(bonk_bot._handle_command(
             mock_message, BotCommand.JAILBONKS, arg, cached_guild
         ))
-        assert result == BotMessage.JAIL_TIME_SET.format(expected)
+        assert result == BotMessage.JAIL_BONKS_SET.format(expected)
 
     @pytest.mark.parametrize("arg", ["abc", "5 4", "-5", "3.14"])
     def test_invalid_input_returns_error(self, bonk_bot: BonkBot, mock_message: MagicMock, cached_guild: Guild, arg: str) -> None:
