@@ -128,6 +128,8 @@ class BonkBot(discord.Client):
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
 
+        if additional_args: additional_args = additional_args.strip()
+
         if command == BotCommand.PREFIX:
             if not additional_args:
                 # reply with prefix here
