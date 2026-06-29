@@ -447,7 +447,7 @@ class TestJailTimeInputs:
         result = _run(bonk_bot._handle_command(
             mock_message, BotCommand.JAILTIME, arg, cached_guild
         ))
-        assert result == BotError.MISSING_NUMBER
+        assert result == BotError.BAD_NUMBER
 
 
 class TestJailAmountInputs:
@@ -469,7 +469,7 @@ class TestJailAmountInputs:
         result = _run(bonk_bot._handle_command(
             mock_message, BotCommand.JAILBONKS, arg, cached_guild
         ))
-        assert result == BotError.MISSING_NUMBER
+        assert result == BotError.BAD_NUMBER
 
 
 # ============================================================

@@ -300,14 +300,14 @@ class BonkBot(discord.Client):
                     )
                 return BotMessage.JAIL_BONKS_INFO.format(cached_guild.horny_jail_bonks)
 
-            if len(additional_args) != 1:
-                return BotError.MISSING_NUMBER
-
             number = 0
             try:
                 number = int(additional_args)
             except ValueError:
-                return BotError.MISSING_NUMBER
+                return BotError.BAD_NUMBER
+            
+            if number < 0:
+                return BotError.BAD_NUMBER
 
             if command == BotCommand.JAILTIME:
                 cached_guild.horny_jail_seconds = number

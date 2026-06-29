@@ -3,4 +3,5 @@ class BotError():
     NO_USER_FOUND = "⚠️ Couldn't find any users by `{}` or no users were mentioned!"
     MISSING_USER = "⚠️ User needs to be specified!"
     MISSING_ROLE_MENTION = "⚠️ Exactly one role has to be mentioned!"
-    MISSING_NUMBER = "⚠️ Exactly one number has to be specified!"
+    BAD_NUMBER = "⚠️ Exactly one positive number has to be specified!"
+    
