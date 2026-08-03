@@ -1,0 +1,21 @@
+[project]
+name = "bonkbot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "das-kaesebrot", email = "49565683+das-kaesebrot@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "discord-py==2.7.1 ; python_full_version >= '3.8'",
+    "pydantic-settings==2.14.2 ; python_full_version >= '3.10'",
+    "sqlalchemy==2.0.51 ; python_full_version >= '3.7'",
+]
+
+[project.scripts]
+bonkbot = "bonkbot:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
