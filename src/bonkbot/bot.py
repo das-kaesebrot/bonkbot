@@ -1,13 +1,14 @@
 import logging
-import discord
 from random import randrange
 
+import discord
+
+from .config import BotConfig
+from .constants.bot_error import BotError
+from .constants.bot_message import BotMessage
 from .db.data_service import DataService
 from .enums.bot_command import BotCommand
 from .models.models import Guild, User
-from .config import BotConfig
-from .constants.bot_message import BotMessage
-from .constants.bot_error import BotError
 from .tasks.background_task_helper import BackgroundTaskHelper
 
 
@@ -71,7 +72,7 @@ class BonkBot(discord.Client):
         await self.bg_task_helper.start_all()
 
     async def on_message(self, message: discord.Message):
-        if not message.guild: # is a DM, ignore
+        if not message.guild:  # is a DM, ignore
             return
 
         guild_prefix = self.__data_service.get_guild_prefix(message.guild.id)
@@ -131,7 +132,8 @@ class BonkBot(discord.Client):
         # the poor man's switch case
         # handle different bot commands, ignoring all others that don't fit
 
-        if additional_args: additional_args = additional_args.strip()
+        if additional_args:
+            additional_args = additional_args.strip()
 
         if command == BotCommand.PREFIX:
             if not additional_args:
@@ -194,7 +196,9 @@ class BonkBot(discord.Client):
             user.bonk()
             self.__data_service.save_and_commit(user)
 
-            if (not user.bonk_amount() % cached_guild.horny_jail_bonks == 0) or (not cached_guild.horny_jail_role):
+            if (not user.bonk_amount() % cached_guild.horny_jail_bonks == 0) or (
+                not cached_guild.horny_jail_role
+            ):
                 return BotMessage.BONK.format(
                     name=bonked_user.display_name, amount=user.bonk_amount()
                 )
@@ -240,7 +244,7 @@ class BonkBot(discord.Client):
                     f"Ignoring privileged command '{command}' from unprivileged user '{message.author.id}'"
                 )
                 return
-            
+
             if not cached_guild.horny_jail_role:
                 return BotError.NO_JAIL_SET
 
@@ -311,7 +315,7 @@ class BonkBot(discord.Client):
                 number = int(additional_args)
             except ValueError:
                 return BotError.BAD_NUMBER
-            
+
             if number < 0:
                 return BotError.BAD_NUMBER
 
@@ -361,8 +365,13 @@ class BonkBot(discord.Client):
 
         # try matching a user by querying members
         matched_user = discord.utils.find(
-            lambda m: (m.name.find(additional_args.lower()) != -1)
-            or ((m.nick is not None) and (m.nick.find(additional_args.lower()) != -1)),
+            lambda m: (
+                (m.name.find(additional_args.lower()) != -1)
+                or (
+                    (m.nick is not None)
+                    and (m.nick.find(additional_args.lower()) != -1)
+                )
+            ),
             message.channel.guild.members,
         )
 
@@ -424,45 +433,58 @@ class BonkBot(discord.Client):
         self.__logger.info("Activity changed, updating presence via API")
         self.__cached_activity = activity.state
         await self.change_presence(activity=activity, status=discord.Status.online)
-        
+
     async def clean_up_unused_guilds(self):
         self.__logger.info("Cleaning up unused guilds")
-                
-        self.__logger.info(f"Guilds in database: {self.__data_service.get_total_guild_count()}")
+
+        self.__logger.info(
+            f"Guilds in database: {self.__data_service.get_total_guild_count()}"
+        )
         guilds_cached = set(self.__data_service.get_all_guild_ids())
-        
+
         guilds_discord = []
-        
+
         remaining_guild_ids_to_fetch = len(self.guilds)
-        
+
         last_fetched_guild_id = None
-        
+
         while True:
             fetch_limit = 200
-            fetched_guild_ids = [guild.id async for guild in self.fetch_guilds(after=last_fetched_guild_id, limit=fetch_limit, with_counts=False)]
-            
-            remaining_guild_ids_to_fetch = remaining_guild_ids_to_fetch - len(fetched_guild_ids)
+            fetched_guild_ids = [
+                guild.id
+                async for guild in self.fetch_guilds(
+                    after=last_fetched_guild_id, limit=fetch_limit, with_counts=False
+                )
+            ]
+
+            remaining_guild_ids_to_fetch = remaining_guild_ids_to_fetch - len(
+                fetched_guild_ids
+            )
             guilds_discord.extend(fetched_guild_ids)
-            
+
             if remaining_guild_ids_to_fetch <= 0:
                 break
-            
+
             last_fetched_guild_id = fetched_guild_ids[-1]
-        
+
         stale_guild_ids = list(guilds_cached.difference(guilds_discord))
-        
+
         self.__logger.debug(f"Guilds that client is part of: {guilds_discord}")
-        self.__logger.debug(f"Guilds that are cached in database: {list(guilds_cached)}")
+        self.__logger.debug(
+            f"Guilds that are cached in database: {list(guilds_cached)}"
+        )
         self.__logger.debug(f"Difference: {stale_guild_ids}")
-        
+
         if not self.__config.clean_up_stale_guilds:
-            self.__logger.info(f"Skipping deletion of stale guilds as feature is disabled")
+            self.__logger.info(
+                "Skipping deletion of stale guilds as feature is disabled"
+            )
             return
-        
+
         if len(stale_guild_ids) == 0:
-            self.__logger.info(f"No stale guilds found, exiting job")
+            self.__logger.info("No stale guilds found, exiting job")
             return
-        
+
         self.__logger.info(f"Removing stale guilds from database: {stale_guild_ids}")
         self.__data_service.delete_guilds(stale_guild_ids)
 
@@ -479,8 +501,9 @@ class BonkBot(discord.Client):
         try:
             await member.remove_roles(role)
         except discord.errors.Forbidden:
-            self.__logger.exception(f"Couldn't remove user {member.id} from role {role.id}!")
-            
+            self.__logger.exception(
+                f"Couldn't remove user {member.id} from role {role.id}!"
+            )
 
     async def _send_to_horny_jail(self, user: User):
         guild = self.__data_service.get_guild(user.guild_id)

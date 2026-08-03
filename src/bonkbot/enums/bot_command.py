@@ -12,7 +12,7 @@ class BotCommand(StrEnum):
     JAILTIME = "bonkjailtime"
     JAILBONKS = "bonkjailamount"
     JAIL = "hornyjail"
-    
+
     @staticmethod
     def list():
-        return list(map(lambda c: c.value, BotCommand))
+        return [c.value for c in BotCommand]

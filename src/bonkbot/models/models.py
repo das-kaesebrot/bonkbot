@@ -1,13 +1,12 @@
-from hashlib import sha3_256
-from typing import List
 from datetime import datetime, timedelta
+from hashlib import sha3_256
+
 from sqlalchemy import DateTime, ForeignKey, String
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
+
 from bonkbot.enums import default_values
+
 
 class Base(DeclarativeBase):
     pass
@@ -17,11 +16,15 @@ class Guild(Base):
     __tablename__ = "guilds"
     id: Mapped[int] = mapped_column(primary_key=True)
     prefix: Mapped[str] = mapped_column(String(1))
-    users: Mapped[List["User"]] = relationship()
+    users: Mapped[list["User"]] = relationship()
     admin_role: Mapped[int] = mapped_column(nullable=True)
     horny_jail_role: Mapped[int] = mapped_column(nullable=True)
-    horny_jail_seconds: Mapped[int] = mapped_column(nullable=True, default=default_values.HORNY_JAIL_SECONDS)
-    horny_jail_bonks: Mapped[int] = mapped_column(nullable=True, default=default_values.HORNY_JAIL_BONKS)
+    horny_jail_seconds: Mapped[int] = mapped_column(
+        nullable=True, default=default_values.HORNY_JAIL_SECONDS
+    )
+    horny_jail_bonks: Mapped[int] = mapped_column(
+        nullable=True, default=default_values.HORNY_JAIL_BONKS
+    )
 
 
 class User(Base):
@@ -30,7 +33,7 @@ class User(Base):
     # The discord id is scoped across all of discord
     id: Mapped[str] = mapped_column(primary_key=True)
     discord_id: Mapped[int] = mapped_column()
-    bonks: Mapped[List["Bonk"]] = relationship()
+    bonks: Mapped[list["Bonk"]] = relationship()
     guild_id: Mapped[int] = mapped_column("guild", ForeignKey("guilds.id"))
     horny_jail_until: Mapped[datetime] = mapped_column(nullable=True)
 
@@ -39,25 +42,22 @@ class User(Base):
 
     def bonk_amount(self):
         return len(self.bonks)
-    
+
     def pardon(self):
         self.horny_jail_until = None
 
-    def send_to_horny_jail(
-        self, jail_time_seconds: int
-    ):
-        # if the user is already in horny jail, extend that time        
+    def send_to_horny_jail(self, jail_time_seconds: int):
+        # if the user is already in horny jail, extend that time
         jail_start = self.horny_jail_until
-        
+
         if not jail_start:
             jail_start: datetime = datetime.now()
-        
+
         self.horny_jail_until = jail_start + timedelta(seconds=jail_time_seconds)
-        
 
     @staticmethod
     def get_id(discord_id: int, guild_id: int) -> str:
-        return sha3_256(f"{discord_id}{guild_id}".encode("utf-8")).hexdigest()
+        return sha3_256(f"{discord_id}{guild_id}".encode()).hexdigest()
 
 
 class Bonk(Base):

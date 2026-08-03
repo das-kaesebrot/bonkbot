@@ -1,25 +1,27 @@
-class BotMessage():
+class BotMessage:
     BONK = "**🔨 bonk {name}**\n\n_User has been bonked {amount} times so far_"
-    SENT_TO_JAIL = "🚨 WEE WOO 🚨\n**{name}** just got sent to horny jail until <t:{timestamp}>"
+    SENT_TO_JAIL = (
+        "🚨 WEE WOO 🚨\n**{name}** just got sent to horny jail until <t:{timestamp}>"
+    )
     PARDONED = "🕊 User **{}** was released early from horny jail for good behaviour"
-    
+
     GUILD_PREFIX_INFO = "Guild is using prefix `{}`"
     GUILD_PREFIX_SET = "Set guild command prefix to `{}`"
-    
+
     JAIL_ROLE_INFO = "Guild is using horny jail role <@&{}>"
     JAIL_ROLE_SET = "Set guild horny jail role to <@&{}>"
-    
+
     ADMIN_ROLE_INFO = "Guild is using admin role <@&{}>"
     ADMIN_ROLE_SET = "Set guild admin role to <@&{}>"
-    
+
     JAIL_TIME_INFO = "Guild is using {} seconds jail time"
     JAIL_TIME_SET = "Set guild jail time to {} seconds"
-    
+
     JAIL_BONKS_INFO = "Guild is using {} bonks to send to horny jail"
     JAIL_BONKS_SET = "Set horny jail bonks to {}"
-    
+
     USER_BONKS_INFO = "User **{name}** has been bonked {amount} times so far"
-    
+
     HELP = """**Available commands**
 
 **User commands**
