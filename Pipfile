@@ -9,5 +9,5 @@ SQLAlchemy = "~=2.1.0"
 pydantic-settings = "~=2.16.0"
 
 [dev-packages]
-flake8 = "~=7.4.0"
+flake8 = "~=7.5.0"
 pytest = "~=9.2.0"
