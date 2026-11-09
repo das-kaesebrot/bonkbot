@@ -1,5 +1,7 @@
 import logging
-from discord.ext import tasks, commands
+
+from discord.ext import commands, tasks
+
 
 class BackgroundTaskHelper(commands.Cog):
     def __init__(self, bot):
@@ -10,20 +12,20 @@ class BackgroundTaskHelper(commands.Cog):
         self.jail_sync_job.cancel()
         self.bot_presence_job.cancel()
         self.guild_cleanup_job.cancel()
-    
+
     async def start_all(self):
         for job in [self.jail_sync_job, self.bot_presence_job, self.guild_cleanup_job]:
-            if not job.is_running(): job.start()
-    
+            if not job.is_running():
+                job.start()
+
     @tasks.loop(minutes=1)
     async def jail_sync_job(self):
         await self.bot.sync_horny_jails()
-        
+
     @tasks.loop(minutes=1)
     async def bot_presence_job(self):
-        await self.bot.update_presence()    
-    
+        await self.bot.update_presence()
+
     @tasks.loop(hours=24)
     async def guild_cleanup_job(self):
         await self.bot.clean_up_unused_guilds()
-        

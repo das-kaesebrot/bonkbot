@@ -5,17 +5,16 @@ import os
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 import discord
+import pytest
 from pydantic_core import ValidationError
 
-from bonkbot.main import main
 from bonkbot.bot import BonkBot
-from bonkbot.db.data_service import DataService
 from bonkbot.config import BotConfig, GuildConfig
-from bonkbot.enums.default_values import HORNY_JAIL_SECONDS, HORNY_JAIL_BONKS
+from bonkbot.db.data_service import DataService
+from bonkbot.enums.default_values import HORNY_JAIL_BONKS, HORNY_JAIL_SECONDS
+from bonkbot.main import main
 from bonkbot.tasks.background_task_helper import BackgroundTaskHelper
-
 
 # Exit codes used in main()
 EXIT_CONFIG_ERROR = 1
@@ -64,6 +63,7 @@ def _run(coro) -> Any:
 
 class AsyncIter:
     """Wraps items into an async iterable for mocking async generators."""
+
     def __init__(self, items):
         self._items = list(items)
 
@@ -80,6 +80,7 @@ class AsyncIter:
 # ============================================================
 # Fixtures
 # ============================================================
+
 
 @pytest.fixture
 def mock_config() -> MagicMock:
@@ -107,6 +108,7 @@ def bonk_bot(data_service: DataService, mock_config: MagicMock) -> BonkBot:
 # ============================================================
 # TestMainFunction
 # ============================================================
+
 
 class TestMainFunction:
     """Tests for the main() entry point in bonkbot/main.py."""
@@ -141,13 +143,14 @@ class TestMainFunction:
             assert kwargs["data_service"] is mock_ds
             assert kwargs["config"] is mock_config
 
-            mock_client.run.assert_called_once_with(
-                mock_config.token, log_handler=None
-            )
+            mock_client.run.assert_called_once_with(mock_config.token, log_handler=None)
 
     def test_main_validation_error_exits_with_config_error_code(self):
         with (
-            patch("bonkbot.main.BotConfig", side_effect=ValidationError.from_exception_data("test", line_errors=[])),
+            patch(
+                "bonkbot.main.BotConfig",
+                side_effect=ValidationError.from_exception_data("test", line_errors=[]),
+            ),
         ):
             with pytest.raises(SystemExit) as exc_info:
                 main()
@@ -212,6 +215,7 @@ class TestMainFunction:
 # ============================================================
 # TestConfigLoading
 # ============================================================
+
 
 class TestConfigLoading:
     """Tests for BotConfig loading behavior."""
@@ -308,6 +312,7 @@ class TestConfigLoading:
 # ============================================================
 # TestBonkBotInitialization
 # ============================================================
+
 
 class TestBonkBotInitialization:
     """Tests for BonkBot.__init__()."""
@@ -427,6 +432,7 @@ class TestBonkBotInitialization:
 # TestOnReady
 # ============================================================
 
+
 class TestOnReady:
     """Tests for BonkBot.on_ready()."""
 
@@ -473,6 +479,7 @@ class TestOnReady:
 # ============================================================
 # TestBackgroundTaskHelper
 # ============================================================
+
 
 class TestBackgroundTaskHelper:
     """Tests for BackgroundTaskHelper."""
